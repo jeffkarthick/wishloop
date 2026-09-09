@@ -56,6 +56,12 @@ const translations = {
 
     footer: "Create. Share. Celebrate.",
 
+    browserTitle: "Open WishLoop in your browser",
+    browserDescription:
+      "For the best sharing experience, open this page in Safari, Chrome, or your default browser.",
+    browserInstruction:
+      "Tap the browser menu and choose “Open in Browser”.",
+
     alertNames:
       "Please enter both your name and the recipient's name.",
     alertImage:
@@ -109,6 +115,12 @@ const translations = {
     anotherWish: "एक और शुभकामना बनाएं",
 
     footer: "बनाएं। साझा करें। जश्न मनाएं।",
+
+    browserTitle: "WishLoop को अपने ब्राउज़र में खोलें",
+    browserDescription:
+      "बेहतर शेयरिंग अनुभव के लिए इस पेज को Safari, Chrome या अपने डिफ़ॉल्ट ब्राउज़र में खोलें।",
+    browserInstruction:
+      "ब्राउज़र मेनू खोलें और “Open in Browser” चुनें।",
 
     alertNames:
       "कृपया अपना नाम और प्राप्तकर्ता का नाम दोनों दर्ज करें।",
@@ -164,6 +176,12 @@ const translations = {
 
     footer: "உருவாக்குங்கள். பகிருங்கள். கொண்டாடுங்கள்.",
 
+    browserTitle: "WishLoop-ஐ உங்கள் browser-ல் திறக்கவும்",
+    browserDescription:
+      "சிறந்த sharing அனுபவத்திற்காக இந்த பக்கத்தை Safari, Chrome அல்லது உங்கள் default browser-ல் திறக்கவும்.",
+    browserInstruction:
+      "Browser menu-ஐ திறந்து “Open in Browser” என்பதை தேர்வு செய்யுங்கள்.",
+
     alertNames:
       "உங்கள் பெயர் மற்றும் பெறுபவரின் பெயர் இரண்டையும் உள்ளிடுங்கள்.",
     alertImage:
@@ -217,6 +235,12 @@ const translations = {
     anotherWish: "మరో శుభాకాంక్షను సృష్టించండి",
 
     footer: "సృష్టించండి. పంచుకోండి. జరుపుకోండి.",
+
+    browserTitle: "WishLoop ను మీ browser లో తెరవండి",
+    browserDescription:
+      "మంచి sharing అనుభవం కోసం ఈ పేజీని Safari, Chrome లేదా మీ default browser లో తెరవండి.",
+    browserInstruction:
+      "Browser menu తెరిచి “Open in Browser” ను ఎంచుకోండి.",
 
     alertNames:
       "దయచేసి మీ పేరు మరియు స్వీకర్త పేరు రెండింటినీ నమోదు చేయండి.",
@@ -272,6 +296,12 @@ const translations = {
 
     footer: "तयार करा. शेअर करा. साजरे करा.",
 
+    browserTitle: "WishLoop तुमच्या browser मध्ये उघडा",
+    browserDescription:
+      "चांगल्या sharing अनुभवासाठी हा page Safari, Chrome किंवा तुमच्या default browser मध्ये उघडा.",
+    browserInstruction:
+      "Browser menu उघडा आणि “Open in Browser” निवडा.",
+
     alertNames:
       "कृपया तुमचे नाव आणि प्राप्तकर्त्याचे नाव दोन्ही लिहा.",
     alertImage:
@@ -325,6 +355,12 @@ const translations = {
     anotherWish: "আরেকটি শুভেচ্ছা তৈরি করুন",
 
     footer: "তৈরি করুন। শেয়ার করুন। উদযাপন করুন।",
+
+    browserTitle: "WishLoop আপনার browser-এ খুলুন",
+    browserDescription:
+      "সেরা sharing অভিজ্ঞতার জন্য এই page Safari, Chrome বা আপনার default browser-এ খুলুন।",
+    browserInstruction:
+      "Browser menu খুলে “Open in Browser” নির্বাচন করুন।",
 
     alertNames:
       "অনুগ্রহ করে আপনার নাম এবং প্রাপকের নাম দুটিই লিখুন।",
@@ -399,29 +435,73 @@ export default function Home() {
   const [selectedWish, setSelectedWish] = useState(0);
   const [generated, setGenerated] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isInAppBrowser, setIsInAppBrowser] =
+    useState(false);
 
-  const t = translations[language] || translations.en;
-  const currentWishes = wishes[language] || wishes.en;
+  const t =
+    translations[language] ||
+    translations.en;
+
+  const currentWishes =
+    wishes[language] ||
+    wishes.en;
+
+  /* =======================================================
+     DETECT IN-APP BROWSER
+  ======================================================= */
+
+  useEffect(() => {
+    const ua =
+      navigator.userAgent ||
+      navigator.vendor ||
+      window.opera ||
+      "";
+
+    const isFacebook =
+      /FBAN|FBAV|FB_IAB/i.test(ua);
+
+    const isInstagram =
+      /Instagram/i.test(ua);
+
+    const isMessenger =
+      /Messenger/i.test(ua);
+
+    setIsInAppBrowser(
+      isFacebook ||
+      isInstagram ||
+      isMessenger
+    );
+  }, []);
 
   /* =======================================================
      SHARED LINK
   ======================================================= */
 
   useEffect(() => {
-    const params = new URLSearchParams(
-      window.location.search
-    );
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
 
-    const sharedName = params.get("name");
-    const sharedReceiver = params.get("to");
-    const sharedLanguage = params.get("lang");
-    const sharedWish = params.get("wish");
+    const sharedName =
+      params.get("name");
+
+    const sharedReceiver =
+      params.get("to");
+
+    const sharedLanguage =
+      params.get("lang");
+
+    const sharedWish =
+      params.get("wish");
 
     if (
       sharedLanguage &&
       translations[sharedLanguage]
     ) {
-      setLanguage(sharedLanguage);
+      setLanguage(
+        sharedLanguage
+      );
 
       document.documentElement.lang =
         sharedLanguage;
@@ -436,17 +516,22 @@ export default function Home() {
     }
 
     if (sharedWish !== null) {
-      const wishIndex = Number(sharedWish);
+      const wishIndex =
+        Number(sharedWish);
 
       const sharedWishes =
-        wishes[sharedLanguage] || wishes.en;
+        wishes[sharedLanguage] ||
+        wishes.en;
 
       if (
         Number.isInteger(wishIndex) &&
         wishIndex >= 0 &&
-        wishIndex < sharedWishes.length
+        wishIndex <
+          sharedWishes.length
       ) {
-        setSelectedWish(wishIndex);
+        setSelectedWish(
+          wishIndex
+        );
       }
     }
 
@@ -458,7 +543,9 @@ export default function Home() {
 
       setTimeout(() => {
         document
-          .getElementById("wish-card")
+          .getElementById(
+            "wish-card"
+          )
           ?.scrollIntoView({
             behavior: "smooth",
             block: "center",
@@ -476,7 +563,8 @@ export default function Home() {
     setSelectedWish(0);
     setCopied(false);
 
-    document.documentElement.lang = code;
+    document.documentElement.lang =
+      code;
   }
 
   /* =======================================================
@@ -484,9 +572,10 @@ export default function Home() {
   ======================================================= */
 
   function getShareUrl() {
-    const url = new URL(
-      window.location.href
-    );
+    const url =
+      new URL(
+        window.location.href
+      );
 
     url.search = "";
 
@@ -530,7 +619,9 @@ export default function Home() {
 
     setTimeout(() => {
       document
-        .getElementById("wish-card")
+        .getElementById(
+          "wish-card"
+        )
         ?.scrollIntoView({
           behavior: "smooth",
           block: "center",
@@ -563,52 +654,57 @@ export default function Home() {
         shareCard,
         {
           scale: 2,
+
           backgroundColor:
             "#ff1744",
+
           useCORS: true,
+
           allowTaint: false,
+
           logging: false,
 
-          onclone: (
-            clonedDocument
-          ) => {
-            const clonedCard =
-              clonedDocument.getElementById(
-                "whatsapp-share-card"
-              );
+          onclone:
+            (
+              clonedDocument
+            ) => {
+              const clonedCard =
+                clonedDocument.getElementById(
+                  "whatsapp-share-card"
+                );
 
-            if (clonedCard) {
-              clonedCard.style.setProperty(
-                "animation",
-                "none",
-                "important"
-              );
+              if (clonedCard) {
+                clonedCard.style.setProperty(
+                  "animation",
+                  "none",
+                  "important"
+                );
 
-              clonedCard.style.setProperty(
-                "opacity",
-                "1",
-                "important"
-              );
+                clonedCard.style.setProperty(
+                  "opacity",
+                  "1",
+                  "important"
+                );
 
-              clonedCard.style.setProperty(
-                "visibility",
-                "visible",
-                "important"
-              );
+                clonedCard.style.setProperty(
+                  "visibility",
+                  "visible",
+                  "important"
+                );
 
-              clonedCard.style.setProperty(
-                "transform",
-                "none",
-                "important"
-              );
+                clonedCard.style.setProperty(
+                  "transform",
+                  "none",
+                  "important"
+                );
 
-              clonedCard.style.setProperty(
-                "filter",
-                "none",
-                "important"
-              );
-            }
-          },
+                clonedCard.style.setProperty(
+                  "filter",
+                  "none",
+                  "important"
+                );
+              }
+            },
         }
       );
 
@@ -632,54 +728,95 @@ export default function Home() {
   }
 
   /* =======================================================
-     WHATSAPP
+     WHATSAPP SHARE
+     
+     IMPORTANT:
+     - No wa.me
+     - No whatsapp://
+     - No Play Store redirect
+     - No App Store redirect
+     
+     Uses native Web Share.
   ======================================================= */
 
-  /* =======================================================
-   WHATSAPP
-======================================================= */
+  async function shareWhatsApp() {
+    try {
+      if (
+        !navigator.share
+      ) {
+        const blob =
+          await createShareImage();
 
-async function shareWhatsApp() {
-  try {
-    const shareUrl = getShareUrl();
+        const imageUrl =
+          URL.createObjectURL(
+            blob
+          );
 
-    const shareText =
-      `${t.shareText}\n${shareUrl}`;
+        const link =
+          document.createElement(
+            "a"
+          );
 
-    /*
-     * WhatsApp direct share URL
-     * Works better when the website is opened
-     * from Facebook / Instagram in-app browser.
-     */
+        link.href =
+          imageUrl;
 
-    const whatsappUrl =
-      `https://wa.me/?text=${encodeURIComponent(
-        shareText
-      )}`;
+        link.download =
+          "wishloop-greeting.png";
 
-    /*
-     * First try native share on supported mobile browsers.
-     * This keeps the image-sharing option when available.
-     */
+        document.body.appendChild(
+          link
+        );
 
-    const blob = await createShareImage();
+        link.click();
 
-    const file = new File(
-      [blob],
-      "wishloop-greeting.png",
-      {
-        type: "image/png",
+        link.remove();
+
+        URL.revokeObjectURL(
+          imageUrl
+        );
+
+        try {
+          await navigator.clipboard.writeText(
+            getShareUrl()
+          );
+        } catch {}
+
+        alert(
+          t.alertSaved
+        );
+
+        return;
       }
-    );
 
-    if (
-      navigator.share &&
-      navigator.canShare &&
-      navigator.canShare({
-        files: [file],
-      })
-    ) {
-      try {
+      const shareUrl =
+        getShareUrl();
+
+      const shareText =
+        `${t.shareText}\n${shareUrl}`;
+
+      const blob =
+        await createShareImage();
+
+      const file =
+        new File(
+          [blob],
+          "wishloop-greeting.png",
+          {
+            type: "image/png",
+          }
+        );
+
+      /*
+       * Best option:
+       * Image + text + WishLoop link
+       */
+
+      if (
+        navigator.canShare &&
+        navigator.canShare({
+          files: [file],
+        })
+      ) {
         await navigator.share({
           title: t.brand,
           text: shareText,
@@ -687,60 +824,86 @@ async function shareWhatsApp() {
         });
 
         return;
-      } catch (error) {
-        /*
-         * User cancelled native share.
-         */
-        if (
-          error?.name === "AbortError"
-        ) {
-          return;
-        }
+      }
 
-        /*
-         * If native sharing fails,
-         * continue to direct WhatsApp.
-         */
+      /*
+       * Fallback:
+       * Text + WishLoop link
+       */
+
+      await navigator.share({
+        title: t.brand,
+        text: shareText,
+      });
+
+    } catch (error) {
+      if (
+        error?.name ===
+        "AbortError"
+      ) {
+        return;
+      }
+
+      console.error(
+        "WhatsApp share error:",
+        error
+      );
+
+      /*
+       * Never redirect to wa.me.
+       *
+       * Save image + copy link instead.
+       */
+
+      try {
+        const blob =
+          await createShareImage();
+
+        const imageUrl =
+          URL.createObjectURL(
+            blob
+          );
+
+        const link =
+          document.createElement(
+            "a"
+          );
+
+        link.href =
+          imageUrl;
+
+        link.download =
+          "wishloop-greeting.png";
+
+        document.body.appendChild(
+          link
+        );
+
+        link.click();
+
+        link.remove();
+
+        URL.revokeObjectURL(
+          imageUrl
+        );
+
+        try {
+          await navigator.clipboard.writeText(
+            getShareUrl()
+          );
+        } catch {}
+
+        alert(
+          t.alertSaved
+        );
+
+      } catch {
+        alert(
+          t.alertShare
+        );
       }
     }
-
-    /*
-     * Direct WhatsApp fallback.
-     */
-
-    window.location.href =
-      whatsappUrl;
-
-  } catch (error) {
-    console.error(
-      "WhatsApp share error:",
-      error
-    );
-
-    /*
-     * Even if image generation fails,
-     * still allow WhatsApp link sharing.
-     */
-
-    try {
-      const shareUrl = getShareUrl();
-
-      const shareText =
-        `${t.shareText}\n${shareUrl}`;
-
-      const whatsappUrl =
-        `https://wa.me/?text=${encodeURIComponent(
-          shareText
-        )}`;
-
-      window.location.href =
-        whatsappUrl;
-
-    } catch {
-      alert(t.alertShare);
-    }
   }
-}
 
   /* =======================================================
      INSTAGRAM
@@ -751,24 +914,20 @@ async function shareWhatsApp() {
       const blob =
         await createShareImage();
 
-      const file = new File(
-        [blob],
-        "wishloop-greeting.png",
-        {
-          type: "image/png",
-        }
-      );
+      const file =
+        new File(
+          [blob],
+          "wishloop-greeting.png",
+          {
+            type: "image/png",
+          }
+        );
 
       const shareUrl =
         getShareUrl();
 
       const shareText =
         `${t.shareText}\n${shareUrl}`;
-
-      /*
-       * Native iPhone / Android
-       * Share Sheet
-       */
 
       if (
         navigator.share &&
@@ -785,10 +944,6 @@ async function shareWhatsApp() {
 
         return;
       }
-
-      /*
-       * Fallback
-       */
 
       const imageUrl =
         URL.createObjectURL(
@@ -901,6 +1056,47 @@ async function shareWhatsApp() {
   return (
     <main className="page-shell">
 
+      {/* =================================================
+          IN-APP BROWSER NOTICE
+      ================================================= */}
+
+      {isInAppBrowser && (
+        <div className="browser-banner">
+
+          <div className="browser-banner-content">
+
+            <div className="browser-banner-icon">
+              🌐
+            </div>
+
+            <div className="browser-banner-text">
+
+              <strong>
+                {t.browserTitle}
+              </strong>
+
+              <span>
+                {t.browserDescription}
+              </span>
+
+            </div>
+
+            <button
+              className="browser-open-btn"
+              onClick={() => {
+                alert(
+                  t.browserInstruction
+                );
+              }}
+            >
+              Open in Browser
+            </button>
+
+          </div>
+
+        </div>
+      )}
+
       {/* ================================================
           LANGUAGE BAR
       ================================================= */}
@@ -925,6 +1121,7 @@ async function shareWhatsApp() {
                   )
                 }
               >
+
                 <span>
                   {item.emoji}
                 </span>
@@ -932,6 +1129,7 @@ async function shareWhatsApp() {
                 <span>
                   {item.name}
                 </span>
+
               </button>
             )
           )}
@@ -939,7 +1137,6 @@ async function shareWhatsApp() {
         </div>
 
       </div>
-
 
       {/* ================================================
           HERO
@@ -989,7 +1186,6 @@ async function shareWhatsApp() {
 
       </section>
 
-
       {/* ================================================
           CREATE
       ================================================= */}
@@ -1018,7 +1214,6 @@ async function shareWhatsApp() {
 
           </div>
 
-
           {/* NAME */}
 
           <div className="input-group">
@@ -1043,7 +1238,6 @@ async function shareWhatsApp() {
 
           </div>
 
-
           {/* RECEIVER */}
 
           <div className="input-group">
@@ -1067,7 +1261,6 @@ async function shareWhatsApp() {
             />
 
           </div>
-
 
           {/* WISHES */}
 
@@ -1124,7 +1317,6 @@ async function shareWhatsApp() {
 
           </div>
 
-
           {/* CREATE */}
 
           <button
@@ -1150,7 +1342,6 @@ async function shareWhatsApp() {
 
       </section>
 
-
       {/* ================================================
           GENERATED CARD
       ================================================= */}
@@ -1168,21 +1359,17 @@ async function shareWhatsApp() {
               ✨
             </div>
 
-
             <div className="ganesha-circle">
               🐘
             </div>
-
 
             <div className="card-small-title">
               {t.cardFestival}
             </div>
 
-
             <h2>
               {t.cardTitle}
             </h2>
-
 
             <div className="recipient-line">
 
@@ -1194,7 +1381,6 @@ async function shareWhatsApp() {
 
             </div>
 
-
             <div className="wish-message">
               {
                 currentWishes[
@@ -1203,21 +1389,17 @@ async function shareWhatsApp() {
               }
             </div>
 
-
             <div className="card-divider">
               ✦
             </div>
-
 
             <div className="from-text">
               {t.withLove}
             </div>
 
-
             <div className="sender-name">
               {name}
             </div>
-
 
             <div className="card-footer">
 
@@ -1235,13 +1417,11 @@ async function shareWhatsApp() {
 
             </div>
 
-
             <div className="card-decoration decoration-bottom">
               🌺 ✨ 🌺
             </div>
 
           </div>
-
 
           {/* ============================================
               SHARE BUTTONS
@@ -1255,6 +1435,7 @@ async function shareWhatsApp() {
                 shareWhatsApp
               }
             >
+
               <span>
                 💚
               </span>
@@ -1263,13 +1444,13 @@ async function shareWhatsApp() {
 
             </button>
 
-
             <button
               className="instagram-btn"
               onClick={
                 shareInstagram
               }
             >
+
               <span>
                 📸
               </span>
@@ -1277,7 +1458,6 @@ async function shareWhatsApp() {
               {t.shareInstagram}
 
             </button>
-
 
             <button
               className="copy-btn"
@@ -1298,7 +1478,6 @@ async function shareWhatsApp() {
 
             </button>
 
-
             <button
               className="reset-btn"
               onClick={
@@ -1313,7 +1492,6 @@ async function shareWhatsApp() {
         </section>
 
       )}
-
 
       {/* =================================================
           HIDDEN SHARE IMAGE
@@ -1373,12 +1551,9 @@ async function shareWhatsApp() {
           }}
         >
 
-          {/* DECORATIONS */}
-
           <div
             style={{
-              position:
-                "absolute",
+              position: "absolute",
               top: "30px",
               left: "45px",
               fontSize: "32px",
@@ -1389,8 +1564,7 @@ async function shareWhatsApp() {
 
           <div
             style={{
-              position:
-                "absolute",
+              position: "absolute",
               top: "30px",
               right: "45px",
               fontSize: "32px",
@@ -1398,9 +1572,6 @@ async function shareWhatsApp() {
           >
             🌺
           </div>
-
-
-          {/* GANESHA */}
 
           <div
             style={{
@@ -1413,8 +1584,7 @@ async function shareWhatsApp() {
               borderRadius:
                 "50%",
 
-              display:
-                "flex",
+              display: "flex",
 
               alignItems:
                 "center",
@@ -1437,80 +1607,38 @@ async function shareWhatsApp() {
             🐘
           </div>
 
-
-          {/* OM */}
-
           <div
             style={{
-              textAlign:
-                "center",
-
-              fontSize:
-                "34px",
-
-              fontWeight:
-                "800",
-
-              color:
-                "#fffde7",
+              textAlign: "center",
+              fontSize: "34px",
+              fontWeight: "800",
+              color: "#fffde7",
             }}
           >
             ॐ
           </div>
 
-
-          {/* FESTIVAL */}
-
           <div
             style={{
-              textAlign:
-                "center",
-
-              marginTop:
-                "12px",
-
-              fontSize:
-                "28px",
-
-              fontWeight:
-                "900",
-
-              letterSpacing:
-                "3px",
-
-              color:
-                "#fffde7",
-
-              textTransform:
-                "none",
+              textAlign: "center",
+              marginTop: "12px",
+              fontSize: "28px",
+              fontWeight: "900",
+              letterSpacing: "3px",
+              color: "#fffde7",
             }}
           >
             {t.cardFestival}
           </div>
 
-
-          {/* CARD TITLE */}
-
           <div
             style={{
-              textAlign:
-                "center",
-
-              marginTop:
-                "20px",
-
-              fontSize:
-                "58px",
-
-              lineHeight:
-                "1.15",
-
-              fontWeight:
-                "900",
-
-              color:
-                "#ffffff",
-
+              textAlign: "center",
+              marginTop: "20px",
+              fontSize: "58px",
+              lineHeight: "1.15",
+              fontWeight: "900",
+              color: "#ffffff",
               textShadow:
                 "0 5px 18px rgba(120,0,0,0.45)",
             }}
@@ -1518,53 +1646,26 @@ async function shareWhatsApp() {
             {t.cardTitle}
           </div>
 
-
-          {/* RECEIVER LABEL */}
-
           <div
             style={{
-              textAlign:
-                "center",
-
-              marginTop:
-                "35px",
-
-              fontSize:
-                "24px",
-
-              color:
-                "#fffde7",
+              textAlign: "center",
+              marginTop: "35px",
+              fontSize: "24px",
+              color: "#fffde7",
             }}
           >
             {t.dear}
           </div>
 
-
-          {/* RECEIVER */}
-
           <div
             style={{
-              textAlign:
-                "center",
-
-              marginTop:
-                "7px",
-
-              fontSize:
-                "52px",
-
-              lineHeight:
-                "1.1",
-
-              fontWeight:
-                "900",
-
-              color:
-                "#ffffff",
-
-              wordBreak:
-                "break-word",
-
+              textAlign: "center",
+              marginTop: "7px",
+              fontSize: "52px",
+              lineHeight: "1.1",
+              fontWeight: "900",
+              color: "#ffffff",
+              wordBreak: "break-word",
               textShadow:
                 "0 4px 14px rgba(120,0,0,0.4)",
             }}
@@ -1572,19 +1673,11 @@ async function shareWhatsApp() {
             {receiver}
           </div>
 
-
-          {/* WISH */}
-
           <div
             style={{
-              marginTop:
-                "45px",
-
-              padding:
-                "45px 42px",
-
-              borderRadius:
-                "34px",
+              marginTop: "45px",
+              padding: "45px 42px",
+              borderRadius: "34px",
 
               background:
                 "linear-gradient(145deg, #fffef7, #fff3c4)",
@@ -1595,20 +1688,15 @@ async function shareWhatsApp() {
               boxShadow:
                 "0 15px 45px rgba(120,40,0,0.22)",
 
-              color:
-                "#68152b",
+              color: "#68152b",
 
-              fontSize:
-                "31px",
+              fontSize: "31px",
 
-              lineHeight:
-                "1.55",
+              lineHeight: "1.55",
 
-              textAlign:
-                "center",
+              textAlign: "center",
 
-              fontWeight:
-                "700",
+              fontWeight: "700",
             }}
           >
             {
@@ -1618,74 +1706,37 @@ async function shareWhatsApp() {
             }
           </div>
 
-
-          {/* DIVIDER */}
-
           <div
             style={{
-              textAlign:
-                "center",
-
-              marginTop:
-                "40px",
-
-              fontSize:
-                "32px",
-
-              color:
-                "#fffde7",
-
-              letterSpacing:
-                "12px",
+              textAlign: "center",
+              marginTop: "40px",
+              fontSize: "32px",
+              color: "#fffde7",
+              letterSpacing: "12px",
             }}
           >
             ✦ ✨ ✦
           </div>
 
-
-          {/* WITH LOVE */}
-
           <div
             style={{
-              textAlign:
-                "center",
-
-              marginTop:
-                "25px",
-
-              fontSize:
-                "22px",
-
-              color:
-                "#fffde7",
+              textAlign: "center",
+              marginTop: "25px",
+              fontSize: "22px",
+              color: "#fffde7",
             }}
           >
             {t.withLove}
           </div>
 
-
-          {/* NAME */}
-
           <div
             style={{
-              textAlign:
-                "center",
-
-              marginTop:
-                "8px",
-
-              fontSize:
-                "43px",
-
-              fontWeight:
-                "900",
-
-              color:
-                "#ffffff",
-
-              wordBreak:
-                "break-word",
-
+              textAlign: "center",
+              marginTop: "8px",
+              fontSize: "43px",
+              fontWeight: "900",
+              color: "#ffffff",
+              wordBreak: "break-word",
               textShadow:
                 "0 4px 14px rgba(120,0,0,0.4)",
             }}
@@ -1693,80 +1744,41 @@ async function shareWhatsApp() {
             {name}
           </div>
 
-
-          {/* BRAND */}
-
           <div
             style={{
-              textAlign:
-                "center",
-
-              marginTop:
-                "48px",
-
-              paddingTop:
-                "25px",
-
+              textAlign: "center",
+              marginTop: "48px",
+              paddingTop: "25px",
               borderTop:
                 "2px solid rgba(255,255,255,0.45)",
-
-              fontSize:
-                "27px",
-
-              fontWeight:
-                "900",
-
-              letterSpacing:
-                "4px",
-
-              color:
-                "#fffde7",
+              fontSize: "27px",
+              fontWeight: "900",
+              letterSpacing: "4px",
+              color: "#fffde7",
             }}
           >
             🐘 {t.brand} ✨
           </div>
 
-
-          {/* TAGLINE */}
-
           <div
             style={{
-              textAlign:
-                "center",
-
-              marginTop:
-                "15px",
-
-              fontSize:
-                "20px",
-
-              color:
-                "#fffde7",
+              textAlign: "center",
+              marginTop: "15px",
+              fontSize: "20px",
+              color: "#fffde7",
             }}
           >
             {t.tagline}
           </div>
 
-
-          {/* BOTTOM */}
-
           <div
             style={{
-              position:
-                "absolute",
-
-              bottom:
-                "25px",
-
+              position: "absolute",
+              bottom: "25px",
               left: "0",
-
               right: "0",
-
-              textAlign:
-                "center",
-
-              fontSize:
-                "30px",
+              textAlign: "center",
+              fontSize: "30px",
             }}
           >
             🌺 ✨ 🌺 ✨ 🌺
@@ -1775,7 +1787,6 @@ async function shareWhatsApp() {
         </div>
 
       </div>
-
 
       {/* ================================================
           FOOTER
