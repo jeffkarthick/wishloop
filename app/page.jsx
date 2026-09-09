@@ -3,6 +3,10 @@
 import { useEffect, useState } from "react";
 import html2canvas from "html2canvas";
 
+/* =========================================================
+   LANGUAGES
+========================================================= */
+
 const languages = [
   { code: "hi", name: "हिंदी", emoji: "🇮🇳" },
   { code: "ta", name: "தமிழ்", emoji: "🇮🇳" },
@@ -11,6 +15,340 @@ const languages = [
   { code: "bn", name: "বাংলা", emoji: "🇮🇳" },
   { code: "en", name: "English", emoji: "🌐" },
 ];
+
+/* =========================================================
+   ALL WEBSITE TEXT
+========================================================= */
+
+const translations = {
+  en: {
+    brand: "WISHLOOP",
+    tagline: "Create. Share. Celebrate.",
+    festival: "✨ Ganesh Chaturthi 2026 ✨",
+
+    heroTitle1: "Create a wish.",
+    heroTitle2: "Make someone smile.",
+    heroDescription:
+      "Create a beautiful Ganesh Chaturthi greeting and share it with someone special.",
+
+    createTitle: "Create Your Wish",
+    createSubtitle: "Personalize your festival greeting",
+
+    yourName: "Your Name",
+    yourNamePlaceholder: "Enter your name",
+
+    sendTo: "Send To",
+    receiverPlaceholder: "Enter recipient's name",
+
+    chooseWish: "Choose Your Wish",
+    createButton: "Create My Wish",
+
+    cardFestival: "GANESH CHATURTHI",
+    cardTitle: "Best Wishes",
+    dear: "Dear",
+    withLove: "With love",
+
+    shareWhatsApp: "Share on WhatsApp",
+    shareInstagram: "Share on Instagram",
+    copyLink: "Copy Wish Link",
+    copied: "Link Copied!",
+    anotherWish: "Create Another Wish",
+
+    footer: "Create. Share. Celebrate.",
+
+    alertNames:
+      "Please enter both your name and the recipient's name.",
+    alertImage:
+      "Unable to create the wish image.",
+    alertShare:
+      "Unable to share the wish right now.",
+    alertSaved:
+      "The greeting image was saved. Share it on WhatsApp and paste your WishLoop link.",
+    alertInstagramSaved:
+      "Your greeting image was saved and your WishLoop link was copied.",
+    alertCopy:
+      "Unable to copy the link.",
+    alertInstagramImage:
+      "Unable to create the Instagram image right now.",
+
+    shareText:
+      "✨ Create your own wish with WishLoop:",
+  },
+
+  hi: {
+    brand: "WISHLOOP",
+    tagline: "बनाएं। साझा करें। जश्न मनाएं।",
+    festival: "✨ गणेश चतुर्थी 2026 ✨",
+
+    heroTitle1: "एक शुभकामना बनाएं।",
+    heroTitle2: "किसी के चेहरे पर मुस्कान लाएं।",
+    heroDescription:
+      "एक खूबसूरत गणेश चतुर्थी शुभकामना बनाएं और इसे अपने किसी खास के साथ साझा करें।",
+
+    createTitle: "अपनी शुभकामना बनाएं",
+    createSubtitle: "अपनी त्योहार की शुभकामना को व्यक्तिगत बनाएं",
+
+    yourName: "आपका नाम",
+    yourNamePlaceholder: "अपना नाम दर्ज करें",
+
+    sendTo: "किसे भेजें",
+    receiverPlaceholder: "प्राप्तकर्ता का नाम दर्ज करें",
+
+    chooseWish: "अपनी शुभकामना चुनें",
+    createButton: "मेरी शुभकामना बनाएं",
+
+    cardFestival: "गणेश चतुर्थी",
+    cardTitle: "हार्दिक शुभकामनाएं",
+    dear: "प्रिय",
+    withLove: "सप्रेम",
+
+    shareWhatsApp: "WhatsApp पर साझा करें",
+    shareInstagram: "Instagram पर साझा करें",
+    copyLink: "शुभकामना लिंक कॉपी करें",
+    copied: "लिंक कॉपी हो गया!",
+    anotherWish: "एक और शुभकामना बनाएं",
+
+    footer: "बनाएं। साझा करें। जश्न मनाएं।",
+
+    alertNames:
+      "कृपया अपना नाम और प्राप्तकर्ता का नाम दोनों दर्ज करें।",
+    alertImage:
+      "शुभकामना की तस्वीर नहीं बन सकी।",
+    alertShare:
+      "अभी शुभकामना साझा नहीं की जा सकती।",
+    alertSaved:
+      "शुभकामना की तस्वीर सेव हो गई है। इसे WhatsApp पर साझा करें और अपना WishLoop लिंक पेस्ट करें।",
+    alertInstagramSaved:
+      "शुभकामना की तस्वीर सेव हो गई है और WishLoop लिंक कॉपी हो गया है।",
+    alertCopy:
+      "लिंक कॉपी नहीं हो सका।",
+    alertInstagramImage:
+      "Instagram के लिए शुभकामना की तस्वीर नहीं बन सकी।",
+
+    shareText:
+      "✨ WishLoop के साथ अपनी शुभकामना बनाएं:",
+  },
+
+  ta: {
+    brand: "WISHLOOP",
+    tagline: "உருவாக்குங்கள். பகிருங்கள். கொண்டாடுங்கள்.",
+    festival: "✨ விநாயகர் சதுர்த்தி 2026 ✨",
+
+    heroTitle1: "ஒரு வாழ்த்தை உருவாக்குங்கள்.",
+    heroTitle2: "ஒருவரின் முகத்தில் புன்னகையை வரவழையுங்கள்.",
+    heroDescription:
+      "அழகான விநாயகர் சதுர்த்தி வாழ்த்தை உருவாக்கி, உங்களுக்கு பிடித்த ஒருவருடன் பகிருங்கள்.",
+
+    createTitle: "உங்கள் வாழ்த்தை உருவாக்குங்கள்",
+    createSubtitle: "உங்கள் பண்டிகை வாழ்த்தை தனிப்பயனாக்குங்கள்",
+
+    yourName: "உங்கள் பெயர்",
+    yourNamePlaceholder: "உங்கள் பெயரை உள்ளிடுங்கள்",
+
+    sendTo: "யாருக்கு அனுப்ப வேண்டும்",
+    receiverPlaceholder: "பெறுபவரின் பெயரை உள்ளிடுங்கள்",
+
+    chooseWish: "உங்கள் வாழ்த்தை தேர்வு செய்யுங்கள்",
+    createButton: "என் வாழ்த்தை உருவாக்கு",
+
+    cardFestival: "விநாயகர் சதுர்த்தி",
+    cardTitle: "இனிய நல்வாழ்த்துக்கள்",
+    dear: "அன்பிற்குரிய",
+    withLove: "அன்புடன்",
+
+    shareWhatsApp: "WhatsApp-ல் பகிருங்கள்",
+    shareInstagram: "Instagram-ல் பகிருங்கள்",
+    copyLink: "வாழ்த்து இணைப்பை நகலெடுக்கவும்",
+    copied: "இணைப்பு நகலெடுக்கப்பட்டது!",
+    anotherWish: "மற்றொரு வாழ்த்தை உருவாக்குங்கள்",
+
+    footer: "உருவாக்குங்கள். பகிருங்கள். கொண்டாடுங்கள்.",
+
+    alertNames:
+      "உங்கள் பெயர் மற்றும் பெறுபவரின் பெயர் இரண்டையும் உள்ளிடுங்கள்.",
+    alertImage:
+      "வாழ்த்து படத்தை உருவாக்க முடியவில்லை.",
+    alertShare:
+      "தற்போது வாழ்த்தை பகிர முடியவில்லை.",
+    alertSaved:
+      "வாழ்த்து படம் சேமிக்கப்பட்டது. அதை WhatsApp-ல் பகிர்ந்து உங்கள் WishLoop இணைப்பை ஒட்டுங்கள்.",
+    alertInstagramSaved:
+      "வாழ்த்து படம் சேமிக்கப்பட்டது மற்றும் WishLoop இணைப்பு நகலெடுக்கப்பட்டது.",
+    alertCopy:
+      "இணைப்பை நகலெடுக்க முடியவில்லை.",
+    alertInstagramImage:
+      "Instagram-க்கான வாழ்த்து படத்தை உருவாக்க முடியவில்லை.",
+
+    shareText:
+      "✨ WishLoop மூலம் உங்கள் சொந்த வாழ்த்தை உருவாக்குங்கள்:",
+  },
+
+  te: {
+    brand: "WISHLOOP",
+    tagline: "సృష్టించండి. పంచుకోండి. జరుపుకోండి.",
+    festival: "✨ వినాయక చవితి 2026 ✨",
+
+    heroTitle1: "ఒక శుభాకాంక్షను సృష్టించండి.",
+    heroTitle2: "ఎవరో ఒకరి ముఖంలో చిరునవ్వు తీసుకురండి.",
+    heroDescription:
+      "అందమైన వినాయక చవితి శుభాకాంక్షను సృష్టించి, మీకు ప్రత్యేకమైన వారితో పంచుకోండి.",
+
+    createTitle: "మీ శుభాకాంక్షను సృష్టించండి",
+    createSubtitle: "మీ పండుగ శుభాకాంక్షను వ్యక్తిగతీకరించండి",
+
+    yourName: "మీ పేరు",
+    yourNamePlaceholder: "మీ పేరును నమోదు చేయండి",
+
+    sendTo: "ఎవరికి పంపాలి",
+    receiverPlaceholder: "స్వీకర్త పేరు నమోదు చేయండి",
+
+    chooseWish: "మీ శుభాకాంక్షను ఎంచుకోండి",
+    createButton: "నా శుభాకాంక్షను సృష్టించండి",
+
+    cardFestival: "వినాయక చవితి",
+    cardTitle: "శుభాకాంక్షలు",
+    dear: "ప్రియమైన",
+    withLove: "ప్రేమతో",
+
+    shareWhatsApp: "WhatsAppలో పంచుకోండి",
+    shareInstagram: "Instagramలో పంచుకోండి",
+    copyLink: "శుభాకాంక్ష లింక్‌ను కాపీ చేయండి",
+    copied: "లింక్ కాపీ చేయబడింది!",
+    anotherWish: "మరో శుభాకాంక్షను సృష్టించండి",
+
+    footer: "సృష్టించండి. పంచుకోండి. జరుపుకోండి.",
+
+    alertNames:
+      "దయచేసి మీ పేరు మరియు స్వీకర్త పేరు రెండింటినీ నమోదు చేయండి.",
+    alertImage:
+      "శుభాకాంక్ష చిత్రాన్ని సృష్టించలేకపోయాము.",
+    alertShare:
+      "ప్రస్తుతం శుభాకాంక్షను పంచుకోలేకపోతున్నాము.",
+    alertSaved:
+      "శుభాకాంక్ష చిత్రం సేవ్ చేయబడింది. దాన్ని WhatsAppలో పంచుకుని మీ WishLoop లింక్‌ను జోడించండి.",
+    alertInstagramSaved:
+      "శుభాకాంక్ష చిత్రం సేవ్ చేయబడింది మరియు WishLoop లింక్ కాపీ చేయబడింది.",
+    alertCopy:
+      "లింక్‌ను కాపీ చేయలేకపోయాము.",
+    alertInstagramImage:
+      "Instagram కోసం శుభాకాంక్ష చిత్రాన్ని సృష్టించలేకపోయాము.",
+
+    shareText:
+      "✨ WishLoopతో మీ స్వంత శుభాకాంక్షను సృష్టించండి:",
+  },
+
+  mr: {
+    brand: "WISHLOOP",
+    tagline: "तयार करा. शेअर करा. साजरे करा.",
+    festival: "✨ गणेश चतुर्थी 2026 ✨",
+
+    heroTitle1: "एक शुभेच्छा तयार करा.",
+    heroTitle2: "कोणाच्याही चेहऱ्यावर हसू आणा.",
+    heroDescription:
+      "एक सुंदर गणेश चतुर्थी शुभेच्छा तयार करा आणि ती तुमच्या खास व्यक्तीसोबत शेअर करा.",
+
+    createTitle: "तुमची शुभेच्छा तयार करा",
+    createSubtitle: "तुमची सणाची शुभेच्छा वैयक्तिक बनवा",
+
+    yourName: "तुमचे नाव",
+    yourNamePlaceholder: "तुमचे नाव लिहा",
+
+    sendTo: "कोणाला पाठवायचे",
+    receiverPlaceholder: "प्राप्तकर्त्याचे नाव लिहा",
+
+    chooseWish: "तुमची शुभेच्छा निवडा",
+    createButton: "माझी शुभेच्छा तयार करा",
+
+    cardFestival: "गणेश चतुर्थी",
+    cardTitle: "हार्दिक शुभेच्छा",
+    dear: "प्रिय",
+    withLove: "प्रेमाने",
+
+    shareWhatsApp: "WhatsApp वर शेअर करा",
+    shareInstagram: "Instagram वर शेअर करा",
+    copyLink: "शुभेच्छा लिंक कॉपी करा",
+    copied: "लिंक कॉपी झाली!",
+    anotherWish: "आणखी एक शुभेच्छा तयार करा",
+
+    footer: "तयार करा. शेअर करा. साजरे करा.",
+
+    alertNames:
+      "कृपया तुमचे नाव आणि प्राप्तकर्त्याचे नाव दोन्ही लिहा.",
+    alertImage:
+      "शुभेच्छेची प्रतिमा तयार करता आली नाही.",
+    alertShare:
+      "सध्या शुभेच्छा शेअर करता येत नाही.",
+    alertSaved:
+      "शुभेच्छेची प्रतिमा सेव्ह झाली आहे. ती WhatsApp वर शेअर करा आणि तुमची WishLoop लिंक पेस्ट करा.",
+    alertInstagramSaved:
+      "शुभेच्छेची प्रतिमा सेव्ह झाली आहे आणि WishLoop लिंक कॉपी झाली आहे.",
+    alertCopy:
+      "लिंक कॉपी करता आली नाही.",
+    alertInstagramImage:
+      "Instagram साठी शुभेच्छेची प्रतिमा तयार करता आली नाही.",
+
+    shareText:
+      "✨ WishLoop सोबत तुमची स्वतःची शुभेच्छा तयार करा:",
+  },
+
+  bn: {
+    brand: "WISHLOOP",
+    tagline: "তৈরি করুন। শেয়ার করুন। উদযাপন করুন।",
+    festival: "✨ গণেশ চতুর্থী ২০২৬ ✨",
+
+    heroTitle1: "একটি শুভেচ্ছা তৈরি করুন।",
+    heroTitle2: "কারও মুখে হাসি ফুটিয়ে তুলুন।",
+    heroDescription:
+      "একটি সুন্দর গণেশ চতুর্থীর শুভেচ্ছা তৈরি করুন এবং আপনার প্রিয়জনের সঙ্গে শেয়ার করুন।",
+
+    createTitle: "আপনার শুভেচ্ছা তৈরি করুন",
+    createSubtitle: "আপনার উৎসবের শুভেচ্ছাকে নিজের মতো করে সাজান",
+
+    yourName: "আপনার নাম",
+    yourNamePlaceholder: "আপনার নাম লিখুন",
+
+    sendTo: "কাকে পাঠাবেন",
+    receiverPlaceholder: "প্রাপকের নাম লিখুন",
+
+    chooseWish: "আপনার শুভেচ্ছা বেছে নিন",
+    createButton: "আমার শুভেচ্ছা তৈরি করুন",
+
+    cardFestival: "গণেশ চতুর্থী",
+    cardTitle: "শুভেচ্ছা",
+    dear: "প্রিয়",
+    withLove: "ভালোবাসাসহ",
+
+    shareWhatsApp: "WhatsApp-এ শেয়ার করুন",
+    shareInstagram: "Instagram-এ শেয়ার করুন",
+    copyLink: "শুভেচ্ছার লিঙ্ক কপি করুন",
+    copied: "লিঙ্ক কপি হয়েছে!",
+    anotherWish: "আরেকটি শুভেচ্ছা তৈরি করুন",
+
+    footer: "তৈরি করুন। শেয়ার করুন। উদযাপন করুন।",
+
+    alertNames:
+      "অনুগ্রহ করে আপনার নাম এবং প্রাপকের নাম দুটিই লিখুন।",
+    alertImage:
+      "শুভেচ্ছার ছবি তৈরি করা যায়নি।",
+    alertShare:
+      "এই মুহূর্তে শুভেচ্ছা শেয়ার করা যাচ্ছে না।",
+    alertSaved:
+      "শুভেচ্ছার ছবি সেভ হয়েছে। এটি WhatsApp-এ শেয়ার করুন এবং আপনার WishLoop লিঙ্ক পেস্ট করুন।",
+    alertInstagramSaved:
+      "শুভেচ্ছার ছবি সেভ হয়েছে এবং WishLoop লিঙ্ক কপি হয়েছে।",
+    alertCopy:
+      "লিঙ্ক কপি করা যায়নি।",
+    alertInstagramImage:
+      "Instagram-এর জন্য শুভেচ্ছার ছবি তৈরি করা যায়নি।",
+
+    shareText:
+      "✨ WishLoop-এর মাধ্যমে আপনার নিজের শুভেচ্ছা তৈরি করুন:",
+  },
+};
+
+/* =========================================================
+   WISHES
+========================================================= */
 
 const wishes = {
   hi: [
@@ -50,6 +388,10 @@ const wishes = {
   ],
 };
 
+/* =========================================================
+   MAIN
+========================================================= */
+
 export default function Home() {
   const [language, setLanguage] = useState("en");
   const [name, setName] = useState("");
@@ -58,15 +400,32 @@ export default function Home() {
   const [generated, setGenerated] = useState(false);
   const [copied, setCopied] = useState(false);
 
+  const t = translations[language] || translations.en;
   const currentWishes = wishes[language] || wishes.en;
 
+  /* =======================================================
+     SHARED LINK
+  ======================================================= */
+
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(
+      window.location.search
+    );
 
     const sharedName = params.get("name");
     const sharedReceiver = params.get("to");
     const sharedLanguage = params.get("lang");
     const sharedWish = params.get("wish");
+
+    if (
+      sharedLanguage &&
+      translations[sharedLanguage]
+    ) {
+      setLanguage(sharedLanguage);
+
+      document.documentElement.lang =
+        sharedLanguage;
+    }
 
     if (sharedName) {
       setName(sharedName);
@@ -76,23 +435,25 @@ export default function Home() {
       setReceiver(sharedReceiver);
     }
 
-    if (sharedLanguage && wishes[sharedLanguage]) {
-      setLanguage(sharedLanguage);
-    }
-
     if (sharedWish !== null) {
       const wishIndex = Number(sharedWish);
+
+      const sharedWishes =
+        wishes[sharedLanguage] || wishes.en;
 
       if (
         Number.isInteger(wishIndex) &&
         wishIndex >= 0 &&
-        wishIndex < (wishes[sharedLanguage] || wishes.en).length
+        wishIndex < sharedWishes.length
       ) {
         setSelectedWish(wishIndex);
       }
     }
 
-    if (sharedName || sharedReceiver) {
+    if (
+      sharedName ||
+      sharedReceiver
+    ) {
       setGenerated(true);
 
       setTimeout(() => {
@@ -106,24 +467,62 @@ export default function Home() {
     }
   }, []);
 
+  /* =======================================================
+     LANGUAGE CHANGE
+  ======================================================= */
+
+  function changeLanguage(code) {
+    setLanguage(code);
+    setSelectedWish(0);
+    setCopied(false);
+
+    document.documentElement.lang = code;
+  }
+
+  /* =======================================================
+     SHARE URL
+  ======================================================= */
+
   function getShareUrl() {
-    const url = new URL(window.location.href);
+    const url = new URL(
+      window.location.href
+    );
 
     url.search = "";
 
-    url.searchParams.set("name", name.trim());
-    url.searchParams.set("to", receiver.trim());
-    url.searchParams.set("lang", language);
-    url.searchParams.set("wish", String(selectedWish));
+    url.searchParams.set(
+      "name",
+      name.trim()
+    );
+
+    url.searchParams.set(
+      "to",
+      receiver.trim()
+    );
+
+    url.searchParams.set(
+      "lang",
+      language
+    );
+
+    url.searchParams.set(
+      "wish",
+      String(selectedWish)
+    );
 
     return url.toString();
   }
 
+  /* =======================================================
+     CREATE WISH
+  ======================================================= */
+
   function createWish() {
-    if (!name.trim() || !receiver.trim()) {
-      alert(
-        "Please enter both your name and the recipient's name."
-      );
+    if (
+      !name.trim() ||
+      !receiver.trim()
+    ) {
+      alert(t.alertNames);
       return;
     }
 
@@ -139,75 +538,89 @@ export default function Home() {
     }, 100);
   }
 
-  /* ==========================================
+  /* =======================================================
      CREATE PNG
-  ========================================== */
+  ======================================================= */
 
   async function createShareImage() {
     const shareCard =
-      document.getElementById("whatsapp-share-card");
+      document.getElementById(
+        "whatsapp-share-card"
+      );
 
     if (!shareCard) {
-      throw new Error("Share card not found.");
+      throw new Error(
+        "Share card not found."
+      );
     }
 
     if (document.fonts?.ready) {
       await document.fonts.ready;
     }
 
-    const canvas = await html2canvas(shareCard, {
-      scale: 2,
-      backgroundColor: "#ff1744",
-      useCORS: true,
-      allowTaint: false,
-      logging: false,
+    const canvas =
+      await html2canvas(
+        shareCard,
+        {
+          scale: 2,
+          backgroundColor:
+            "#ff1744",
+          useCORS: true,
+          allowTaint: false,
+          logging: false,
 
-      onclone: (clonedDocument) => {
-        const clonedCard =
-          clonedDocument.getElementById(
-            "whatsapp-share-card"
-          );
+          onclone: (
+            clonedDocument
+          ) => {
+            const clonedCard =
+              clonedDocument.getElementById(
+                "whatsapp-share-card"
+              );
 
-        if (clonedCard) {
-          clonedCard.style.setProperty(
-            "animation",
-            "none",
-            "important"
-          );
+            if (clonedCard) {
+              clonedCard.style.setProperty(
+                "animation",
+                "none",
+                "important"
+              );
 
-          clonedCard.style.setProperty(
-            "opacity",
-            "1",
-            "important"
-          );
+              clonedCard.style.setProperty(
+                "opacity",
+                "1",
+                "important"
+              );
 
-          clonedCard.style.setProperty(
-            "visibility",
-            "visible",
-            "important"
-          );
+              clonedCard.style.setProperty(
+                "visibility",
+                "visible",
+                "important"
+              );
 
-          clonedCard.style.setProperty(
-            "transform",
-            "none",
-            "important"
-          );
+              clonedCard.style.setProperty(
+                "transform",
+                "none",
+                "important"
+              );
 
-          clonedCard.style.setProperty(
-            "filter",
-            "none",
-            "important"
+              clonedCard.style.setProperty(
+                "filter",
+                "none",
+                "important"
+              );
+            }
+          },
+        }
+      );
+
+    const blob =
+      await new Promise(
+        (resolve) => {
+          canvas.toBlob(
+            resolve,
+            "image/png"
           );
         }
-      },
-    });
-
-    const blob = await new Promise((resolve) => {
-      canvas.toBlob(
-        resolve,
-        "image/png"
       );
-    });
 
     if (!blob) {
       throw new Error(
@@ -218,13 +631,14 @@ export default function Home() {
     return blob;
   }
 
-  /* ==========================================
+  /* =======================================================
      WHATSAPP
-  ========================================== */
+  ======================================================= */
 
   async function shareWhatsApp() {
     try {
-      const blob = await createShareImage();
+      const blob =
+        await createShareImage();
 
       const file = new File(
         [blob],
@@ -234,10 +648,11 @@ export default function Home() {
         }
       );
 
-      const shareUrl = getShareUrl();
+      const shareUrl =
+        getShareUrl();
 
       const shareText =
-        `✨ Create your own wish with WishLoop:\n${shareUrl}`;
+        `${t.shareText}\n${shareUrl}`;
 
       if (
         navigator.share &&
@@ -247,7 +662,7 @@ export default function Home() {
         })
       ) {
         await navigator.share({
-          title: "WishLoop",
+          title: t.brand,
           text: shareText,
           files: [file],
         });
@@ -256,20 +671,31 @@ export default function Home() {
       }
 
       const imageUrl =
-        URL.createObjectURL(blob);
+        URL.createObjectURL(
+          blob
+        );
 
       const link =
-        document.createElement("a");
+        document.createElement(
+          "a"
+        );
 
       link.href = imageUrl;
+
       link.download =
         "wishloop-greeting.png";
 
-      document.body.appendChild(link);
+      document.body.appendChild(
+        link
+      );
+
       link.click();
+
       link.remove();
 
-      URL.revokeObjectURL(imageUrl);
+      URL.revokeObjectURL(
+        imageUrl
+      );
 
       try {
         await navigator.clipboard.writeText(
@@ -277,11 +703,13 @@ export default function Home() {
         );
       } catch {}
 
-      alert(
-        "The greeting image was saved. Share it on WhatsApp and paste your WishLoop link."
-      );
+      alert(t.alertSaved);
+
     } catch (error) {
-      if (error?.name === "AbortError") {
+      if (
+        error?.name ===
+        "AbortError"
+      ) {
         return;
       }
 
@@ -290,98 +718,123 @@ export default function Home() {
         error
       );
 
-      alert(
-        "Unable to share the wish right now."
-      );
+      alert(t.alertShare);
     }
   }
 
-  /* ==========================================
+  /* =======================================================
      INSTAGRAM
-  ========================================== */
+  ======================================================= */
 
   async function shareInstagram() {
-  try {
-    const blob = await createShareImage();
-
-    const file = new File(
-      [blob],
-      "wishloop-greeting.png",
-      {
-        type: "image/png",
-      }
-    );
-
-    const shareUrl = getShareUrl();
-
-    const shareText =
-      `✨ Create your own wish with WishLoop:\n${shareUrl}`;
-
-    // Open native iPhone / Android Share Sheet
-    if (
-      navigator.share &&
-      navigator.canShare &&
-      navigator.canShare({
-        files: [file],
-      })
-    ) {
-      await navigator.share({
-        title: "WishLoop",
-        text: shareText,
-        files: [file],
-      });
-
-      return;
-    }
-
-    // Fallback: save image + copy link
-    const imageUrl = URL.createObjectURL(blob);
-
-    const downloadLink =
-      document.createElement("a");
-
-    downloadLink.href = imageUrl;
-    downloadLink.download =
-      "wishloop-greeting.png";
-
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    downloadLink.remove();
-
-    URL.revokeObjectURL(imageUrl);
-
     try {
-      await navigator.clipboard.writeText(
-        shareUrl
+      const blob =
+        await createShareImage();
+
+      const file = new File(
+        [blob],
+        "wishloop-greeting.png",
+        {
+          type: "image/png",
+        }
       );
-    } catch {}
 
-    alert(
-      "Your greeting image was saved and your WishLoop link was copied."
-    );
+      const shareUrl =
+        getShareUrl();
 
-  } catch (error) {
-    if (error?.name === "AbortError") {
-      return;
+      const shareText =
+        `${t.shareText}\n${shareUrl}`;
+
+      /*
+       * Native iPhone / Android
+       * Share Sheet
+       */
+
+      if (
+        navigator.share &&
+        navigator.canShare &&
+        navigator.canShare({
+          files: [file],
+        })
+      ) {
+        await navigator.share({
+          title: t.brand,
+          text: shareText,
+          files: [file],
+        });
+
+        return;
+      }
+
+      /*
+       * Fallback
+       */
+
+      const imageUrl =
+        URL.createObjectURL(
+          blob
+        );
+
+      const downloadLink =
+        document.createElement(
+          "a"
+        );
+
+      downloadLink.href =
+        imageUrl;
+
+      downloadLink.download =
+        "wishloop-greeting.png";
+
+      document.body.appendChild(
+        downloadLink
+      );
+
+      downloadLink.click();
+
+      downloadLink.remove();
+
+      URL.revokeObjectURL(
+        imageUrl
+      );
+
+      try {
+        await navigator.clipboard.writeText(
+          shareUrl
+        );
+      } catch {}
+
+      alert(
+        t.alertInstagramSaved
+      );
+
+    } catch (error) {
+      if (
+        error?.name ===
+        "AbortError"
+      ) {
+        return;
+      }
+
+      console.error(
+        "Instagram error:",
+        error
+      );
+
+      alert(
+        t.alertInstagramImage
+      );
     }
-
-    console.error(
-      "Instagram share error:",
-      error
-    );
-
-    alert(
-      "Unable to share the wish right now."
-    );
   }
-}
-  /* ==========================================
+
+  /* =======================================================
      COPY LINK
-  ========================================== */
+  ======================================================= */
 
   async function copyLink() {
     try {
-      const shareUrl = getShareUrl();
+      const shareUrl =
+        getShareUrl();
 
       await navigator.clipboard.writeText(
         shareUrl
@@ -392,16 +845,15 @@ export default function Home() {
       setTimeout(() => {
         setCopied(false);
       }, 2000);
+
     } catch {
-      alert(
-        "Unable to copy the link."
-      );
+      alert(t.alertCopy);
     }
   }
 
-  /* ==========================================
+  /* =======================================================
      RESET
-  ========================================== */
+  ======================================================= */
 
   function reset() {
     setName("");
@@ -422,48 +874,56 @@ export default function Home() {
     });
   }
 
+  /* =======================================================
+     UI
+  ======================================================= */
+
   return (
     <main className="page-shell">
 
-      {/* ===================================== */}
-      {/* LANGUAGE */}
-      {/* ===================================== */}
+      {/* ================================================
+          LANGUAGE BAR
+      ================================================= */}
 
       <div className="language-bar">
 
         <div className="language-scroll">
 
-          {languages.map((item) => (
-            <button
-              key={item.code}
-              className={`language-btn ${
-                language === item.code
-                  ? "active"
-                  : ""
-              }`}
-              onClick={() => {
-                setLanguage(item.code);
-                setSelectedWish(0);
-              }}
-            >
-              <span>
-                {item.emoji}
-              </span>
+          {languages.map(
+            (item) => (
+              <button
+                key={item.code}
+                className={`language-btn ${
+                  language ===
+                  item.code
+                    ? "active"
+                    : ""
+                }`}
+                onClick={() =>
+                  changeLanguage(
+                    item.code
+                  )
+                }
+              >
+                <span>
+                  {item.emoji}
+                </span>
 
-              <span>
-                {item.name}
-              </span>
-            </button>
-          ))}
+                <span>
+                  {item.name}
+                </span>
+              </button>
+            )
+          )}
 
         </div>
 
       </div>
 
 
-      {/* ===================================== */}
-      {/* HERO */}
-      {/* ===================================== */}
+      {/* ================================================
+          HERO
+      ================================================= */}
 
       <section className="hero-section">
 
@@ -478,29 +938,31 @@ export default function Home() {
           </div>
 
           <div className="brand-name">
-            WISH<span>LOOP</span>
+            {t.brand}
           </div>
 
           <div className="tagline">
-            Create. Share. Celebrate.
+            {t.tagline}
           </div>
 
           <div className="festival-badge">
-            ✨ Ganesh Chaturthi 2026 ✨
+            {t.festival}
           </div>
 
           <h1>
-            Create a wish.
+
+            {t.heroTitle1}
+
             <br />
+
             <span>
-              Make someone smile.
+              {t.heroTitle2}
             </span>
+
           </h1>
 
           <p className="hero-description">
-            Create a beautiful Ganesh Chaturthi
-            greeting and share it with someone
-            special.
+            {t.heroDescription}
           </p>
 
         </div>
@@ -508,9 +970,9 @@ export default function Home() {
       </section>
 
 
-      {/* ===================================== */}
-      {/* CREATE */}
-      {/* ===================================== */}
+      {/* ================================================
+          CREATE
+      ================================================= */}
 
       <section className="create-section">
 
@@ -523,30 +985,38 @@ export default function Home() {
             </div>
 
             <div>
+
               <h2>
-                Create Your Wish
+                {t.createTitle}
               </h2>
 
               <p>
-                Personalize your festival greeting
+                {t.createSubtitle}
               </p>
+
             </div>
 
           </div>
 
 
+          {/* NAME */}
+
           <div className="input-group">
 
             <label>
-              Your Name
+              {t.yourName}
             </label>
 
             <input
               type="text"
-              placeholder="Enter your name"
+              placeholder={
+                t.yourNamePlaceholder
+              }
               value={name}
               onChange={(e) =>
-                setName(e.target.value)
+                setName(
+                  e.target.value
+                )
               }
               maxLength={40}
             />
@@ -554,18 +1024,24 @@ export default function Home() {
           </div>
 
 
+          {/* RECEIVER */}
+
           <div className="input-group">
 
             <label>
-              Send To
+              {t.sendTo}
             </label>
 
             <input
               type="text"
-              placeholder="Enter recipient's name"
+              placeholder={
+                t.receiverPlaceholder
+              }
               value={receiver}
               onChange={(e) =>
-                setReceiver(e.target.value)
+                setReceiver(
+                  e.target.value
+                )
               }
               maxLength={40}
             />
@@ -573,26 +1049,34 @@ export default function Home() {
           </div>
 
 
+          {/* WISHES */}
+
           <div className="input-group">
 
             <label>
-              Choose Your Wish
+              {t.chooseWish}
             </label>
 
             <div className="wish-options">
 
               {currentWishes.map(
-                (wish, index) => (
+                (
+                  wish,
+                  index
+                ) => (
 
                   <button
                     key={index}
                     className={`wish-option ${
-                      selectedWish === index
+                      selectedWish ===
+                      index
                         ? "selected"
                         : ""
                     }`}
                     onClick={() =>
-                      setSelectedWish(index)
+                      setSelectedWish(
+                        index
+                      )
                     }
                   >
 
@@ -604,7 +1088,8 @@ export default function Home() {
                       {wish}
                     </span>
 
-                    {selectedWish === index && (
+                    {selectedWish ===
+                      index && (
                       <span className="wish-check">
                         ✓
                       </span>
@@ -620,13 +1105,25 @@ export default function Home() {
           </div>
 
 
+          {/* CREATE */}
+
           <button
             className="primary-btn"
-            onClick={createWish}
+            onClick={
+              createWish
+            }
           >
-            <span>✨</span>
-            Create My Wish
-            <span>→</span>
+
+            <span>
+              ✨
+            </span>
+
+            {t.createButton}
+
+            <span>
+              →
+            </span>
+
           </button>
 
         </div>
@@ -634,9 +1131,9 @@ export default function Home() {
       </section>
 
 
-      {/* ===================================== */}
-      {/* RESULT */}
-      {/* ===================================== */}
+      {/* ================================================
+          GENERATED CARD
+      ================================================= */}
 
       {generated && (
 
@@ -651,46 +1148,73 @@ export default function Home() {
               ✨
             </div>
 
+
             <div className="ganesha-circle">
               🐘
             </div>
 
+
             <div className="card-small-title">
-              GANESH CHATURTHI
+              {t.cardFestival}
             </div>
 
+
             <h2>
-              शुभकामनाएं
+              {t.cardTitle}
             </h2>
 
+
             <div className="recipient-line">
-              Dear{" "}
+
+              {t.dear}{" "}
+
               <strong>
                 {receiver}
               </strong>
+
             </div>
 
+
             <div className="wish-message">
-              {currentWishes[selectedWish]}
+              {
+                currentWishes[
+                  selectedWish
+                ]
+              }
             </div>
+
 
             <div className="card-divider">
               ✦
             </div>
 
+
             <div className="from-text">
-              With love,
+              {t.withLove}
             </div>
+
 
             <div className="sender-name">
               {name}
             </div>
 
+
             <div className="card-footer">
-              <span>🐘</span>
-              <strong>WISHLOOP</strong>
-              <span>✨</span>
+
+              <span>
+                🐘
+              </span>
+
+              <strong>
+                {t.brand}
+              </strong>
+
+              <span>
+                ✨
+              </span>
+
             </div>
+
 
             <div className="card-decoration decoration-bottom">
               🌺 ✨ 🌺
@@ -699,34 +1223,49 @@ export default function Home() {
           </div>
 
 
-          {/* ================================= */}
-          {/* ACTION BUTTONS */}
-          {/* ================================= */}
+          {/* ============================================
+              SHARE BUTTONS
+          ============================================= */}
 
           <div className="result-actions">
 
             <button
               className="whatsapp-btn"
-              onClick={shareWhatsApp}
+              onClick={
+                shareWhatsApp
+              }
             >
-              <span>💚</span>
-              Share on WhatsApp
+              <span>
+                💚
+              </span>
+
+              {t.shareWhatsApp}
+
             </button>
 
 
             <button
               className="instagram-btn"
-              onClick={shareInstagram}
+              onClick={
+                shareInstagram
+              }
             >
-              <span>📸</span>
-              Share on Instagram
+              <span>
+                📸
+              </span>
+
+              {t.shareInstagram}
+
             </button>
 
 
             <button
               className="copy-btn"
-              onClick={copyLink}
+              onClick={
+                copyLink
+              }
             >
+
               <span>
                 {copied
                   ? "✓"
@@ -734,16 +1273,19 @@ export default function Home() {
               </span>
 
               {copied
-                ? "Link Copied!"
-                : "Copy Wish Link"}
+                ? t.copied
+                : t.copyLink}
+
             </button>
 
 
             <button
               className="reset-btn"
-              onClick={reset}
+              onClick={
+                reset
+              }
             >
-              Create Another Wish
+              {t.anotherWish}
             </button>
 
           </div>
@@ -753,9 +1295,9 @@ export default function Home() {
       )}
 
 
-      {/* ===================================== */}
-      {/* HIDDEN SHARE CARD */}
-      {/* ===================================== */}
+      {/* =================================================
+          HIDDEN SHARE IMAGE
+      ================================================= */}
 
       <div
         id="whatsapp-share-card"
@@ -788,16 +1330,20 @@ export default function Home() {
             width: "100%",
             minHeight: "100%",
 
-            boxSizing: "border-box",
+            boxSizing:
+              "border-box",
 
             border:
               "5px solid #fff176",
 
-            borderRadius: "46px",
+            borderRadius:
+              "46px",
 
-            padding: "55px",
+            padding:
+              "55px",
 
-            position: "relative",
+            position:
+              "relative",
 
             background:
               "linear-gradient(160deg, rgba(255,255,255,0.22), rgba(255,193,7,0.16))",
@@ -807,9 +1353,12 @@ export default function Home() {
           }}
         >
 
+          {/* DECORATIONS */}
+
           <div
             style={{
-              position: "absolute",
+              position:
+                "absolute",
               top: "30px",
               left: "45px",
               fontSize: "32px",
@@ -820,7 +1369,8 @@ export default function Home() {
 
           <div
             style={{
-              position: "absolute",
+              position:
+                "absolute",
               top: "30px",
               right: "45px",
               fontSize: "32px",
@@ -828,6 +1378,9 @@ export default function Home() {
           >
             🌺
           </div>
+
+
+          {/* GANESHA */}
 
           <div
             style={{
@@ -837,11 +1390,17 @@ export default function Home() {
               margin:
                 "35px auto 28px",
 
-              borderRadius: "50%",
+              borderRadius:
+                "50%",
 
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              display:
+                "flex",
+
+              alignItems:
+                "center",
+
+              justifyContent:
+                "center",
 
               fontSize: "95px",
 
@@ -859,80 +1418,153 @@ export default function Home() {
           </div>
 
 
+          {/* OM */}
+
           <div
             style={{
-              textAlign: "center",
-              fontSize: "34px",
-              fontWeight: "800",
-              color: "#fffde7",
+              textAlign:
+                "center",
+
+              fontSize:
+                "34px",
+
+              fontWeight:
+                "800",
+
+              color:
+                "#fffde7",
             }}
           >
             ॐ
           </div>
 
 
+          {/* FESTIVAL */}
+
           <div
             style={{
-              textAlign: "center",
-              marginTop: "12px",
-              fontSize: "22px",
-              fontWeight: "900",
-              letterSpacing: "6px",
-              color: "#fffde7",
+              textAlign:
+                "center",
+
+              marginTop:
+                "12px",
+
+              fontSize:
+                "28px",
+
+              fontWeight:
+                "900",
+
+              letterSpacing:
+                "3px",
+
+              color:
+                "#fffde7",
+
+              textTransform:
+                "none",
             }}
           >
-            GANESH CHATURTHI
+            {t.cardFestival}
           </div>
 
 
+          {/* CARD TITLE */}
+
           <div
             style={{
-              textAlign: "center",
-              marginTop: "12px",
-              fontSize: "58px",
-              lineHeight: "1.15",
-              fontWeight: "900",
-              color: "#ffffff",
+              textAlign:
+                "center",
+
+              marginTop:
+                "20px",
+
+              fontSize:
+                "58px",
+
+              lineHeight:
+                "1.15",
+
+              fontWeight:
+                "900",
+
+              color:
+                "#ffffff",
+
               textShadow:
                 "0 5px 18px rgba(120,0,0,0.45)",
             }}
           >
-            शुभकामनाएं
+            {t.cardTitle}
           </div>
 
 
+          {/* RECEIVER LABEL */}
+
           <div
             style={{
-              textAlign: "center",
-              marginTop: "35px",
-              fontSize: "24px",
-              color: "#fffde7",
+              textAlign:
+                "center",
+
+              marginTop:
+                "35px",
+
+              fontSize:
+                "24px",
+
+              color:
+                "#fffde7",
             }}
           >
-            Dear
+            {t.dear}
           </div>
 
 
+          {/* RECEIVER */}
+
           <div
             style={{
-              textAlign: "center",
-              marginTop: "7px",
-              fontSize: "52px",
-              lineHeight: "1.1",
-              fontWeight: "900",
-              color: "#ffffff",
-              wordBreak: "break-word",
+              textAlign:
+                "center",
+
+              marginTop:
+                "7px",
+
+              fontSize:
+                "52px",
+
+              lineHeight:
+                "1.1",
+
+              fontWeight:
+                "900",
+
+              color:
+                "#ffffff",
+
+              wordBreak:
+                "break-word",
+
+              textShadow:
+                "0 4px 14px rgba(120,0,0,0.4)",
             }}
           >
             {receiver}
           </div>
 
 
+          {/* WISH */}
+
           <div
             style={{
-              marginTop: "45px",
-              padding: "45px 42px",
-              borderRadius: "34px",
+              marginTop:
+                "45px",
+
+              padding:
+                "45px 42px",
+
+              borderRadius:
+                "34px",
 
               background:
                 "linear-gradient(145deg, #fffef7, #fff3c4)",
@@ -943,122 +1575,204 @@ export default function Home() {
               boxShadow:
                 "0 15px 45px rgba(120,40,0,0.22)",
 
-              color: "#68152b",
+              color:
+                "#68152b",
 
-              fontSize: "31px",
+              fontSize:
+                "31px",
 
-              lineHeight: "1.55",
+              lineHeight:
+                "1.55",
 
-              textAlign: "center",
+              textAlign:
+                "center",
 
-              fontWeight: "700",
+              fontWeight:
+                "700",
             }}
           >
-            {currentWishes[selectedWish]}
+            {
+              currentWishes[
+                selectedWish
+              ]
+            }
           </div>
 
 
+          {/* DIVIDER */}
+
           <div
             style={{
-              textAlign: "center",
-              marginTop: "40px",
-              fontSize: "32px",
-              color: "#fffde7",
-              letterSpacing: "12px",
+              textAlign:
+                "center",
+
+              marginTop:
+                "40px",
+
+              fontSize:
+                "32px",
+
+              color:
+                "#fffde7",
+
+              letterSpacing:
+                "12px",
             }}
           >
             ✦ ✨ ✦
           </div>
 
 
+          {/* WITH LOVE */}
+
           <div
             style={{
-              textAlign: "center",
-              marginTop: "25px",
-              fontSize: "22px",
-              color: "#fffde7",
+              textAlign:
+                "center",
+
+              marginTop:
+                "25px",
+
+              fontSize:
+                "22px",
+
+              color:
+                "#fffde7",
             }}
           >
-            With love,
+            {t.withLove}
           </div>
 
 
+          {/* NAME */}
+
           <div
             style={{
-              textAlign: "center",
-              marginTop: "8px",
-              fontSize: "43px",
-              fontWeight: "900",
-              color: "#ffffff",
-              wordBreak: "break-word",
+              textAlign:
+                "center",
+
+              marginTop:
+                "8px",
+
+              fontSize:
+                "43px",
+
+              fontWeight:
+                "900",
+
+              color:
+                "#ffffff",
+
+              wordBreak:
+                "break-word",
+
+              textShadow:
+                "0 4px 14px rgba(120,0,0,0.4)",
             }}
           >
             {name}
           </div>
 
 
+          {/* BRAND */}
+
           <div
             style={{
-              textAlign: "center",
-              marginTop: "48px",
-              paddingTop: "25px",
+              textAlign:
+                "center",
+
+              marginTop:
+                "48px",
+
+              paddingTop:
+                "25px",
+
               borderTop:
                 "2px solid rgba(255,255,255,0.45)",
-              fontSize: "27px",
-              fontWeight: "900",
-              letterSpacing: "4px",
-              color: "#fffde7",
+
+              fontSize:
+                "27px",
+
+              fontWeight:
+                "900",
+
+              letterSpacing:
+                "4px",
+
+              color:
+                "#fffde7",
             }}
           >
-            🐘 WISHLOOP ✨
+            🐘 {t.brand} ✨
           </div>
 
 
+          {/* TAGLINE */}
+
           <div
             style={{
-              textAlign: "center",
-              marginTop: "15px",
-              fontSize: "20px",
-              color: "#fffde7",
+              textAlign:
+                "center",
+
+              marginTop:
+                "15px",
+
+              fontSize:
+                "20px",
+
+              color:
+                "#fffde7",
             }}
           >
-            Create. Share. Celebrate.
+            {t.tagline}
           </div>
 
 
+          {/* BOTTOM */}
+
           <div
             style={{
-              position: "absolute",
-              bottom: "25px",
+              position:
+                "absolute",
+
+              bottom:
+                "25px",
+
               left: "0",
+
               right: "0",
-              textAlign: "center",
-              fontSize: "30px",
+
+              textAlign:
+                "center",
+
+              fontSize:
+                "30px",
             }}
           >
             🌺 ✨ 🌺 ✨ 🌺
           </div>
 
         </div>
+
       </div>
 
 
-      {/* ===================================== */}
-      {/* FOOTER */}
-      {/* ===================================== */}
+      {/* ================================================
+          FOOTER
+      ================================================= */}
 
       <footer className="site-footer">
 
         <div className="footer-logo">
-          🐘 WISHLOOP
+          🐘 {t.brand}
         </div>
 
         <p>
-          Create. Share. Celebrate.
+          {t.footer}
         </p>
 
         <div className="footer-copy">
-          © 2026 WishLoop
+          © 2026 {t.brand}
         </div>
 
       </footer>
