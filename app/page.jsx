@@ -635,32 +635,51 @@ export default function Home() {
      WHATSAPP
   ======================================================= */
 
-  async function shareWhatsApp() {
-    try {
-      const blob =
-        await createShareImage();
+  /* =======================================================
+   WHATSAPP
+======================================================= */
 
-      const file = new File(
-        [blob],
-        "wishloop-greeting.png",
-        {
-          type: "image/png",
-        }
-      );
+async function shareWhatsApp() {
+  try {
+    const shareUrl = getShareUrl();
 
-      const shareUrl =
-        getShareUrl();
+    const shareText =
+      `${t.shareText}\n${shareUrl}`;
 
-      const shareText =
-        `${t.shareText}\n${shareUrl}`;
+    /*
+     * WhatsApp direct share URL
+     * Works better when the website is opened
+     * from Facebook / Instagram in-app browser.
+     */
 
-      if (
-        navigator.share &&
-        navigator.canShare &&
-        navigator.canShare({
-          files: [file],
-        })
-      ) {
+    const whatsappUrl =
+      `https://wa.me/?text=${encodeURIComponent(
+        shareText
+      )}`;
+
+    /*
+     * First try native share on supported mobile browsers.
+     * This keeps the image-sharing option when available.
+     */
+
+    const blob = await createShareImage();
+
+    const file = new File(
+      [blob],
+      "wishloop-greeting.png",
+      {
+        type: "image/png",
+      }
+    );
+
+    if (
+      navigator.share &&
+      navigator.canShare &&
+      navigator.canShare({
+        files: [file],
+      })
+    ) {
+      try {
         await navigator.share({
           title: t.brand,
           text: shareText,
@@ -668,59 +687,60 @@ export default function Home() {
         });
 
         return;
+      } catch (error) {
+        /*
+         * User cancelled native share.
+         */
+        if (
+          error?.name === "AbortError"
+        ) {
+          return;
+        }
+
+        /*
+         * If native sharing fails,
+         * continue to direct WhatsApp.
+         */
       }
+    }
 
-      const imageUrl =
-        URL.createObjectURL(
-          blob
-        );
+    /*
+     * Direct WhatsApp fallback.
+     */
 
-      const link =
-        document.createElement(
-          "a"
-        );
+    window.location.href =
+      whatsappUrl;
 
-      link.href = imageUrl;
+  } catch (error) {
+    console.error(
+      "WhatsApp share error:",
+      error
+    );
 
-      link.download =
-        "wishloop-greeting.png";
+    /*
+     * Even if image generation fails,
+     * still allow WhatsApp link sharing.
+     */
 
-      document.body.appendChild(
-        link
-      );
+    try {
+      const shareUrl = getShareUrl();
 
-      link.click();
+      const shareText =
+        `${t.shareText}\n${shareUrl}`;
 
-      link.remove();
+      const whatsappUrl =
+        `https://wa.me/?text=${encodeURIComponent(
+          shareText
+        )}`;
 
-      URL.revokeObjectURL(
-        imageUrl
-      );
+      window.location.href =
+        whatsappUrl;
 
-      try {
-        await navigator.clipboard.writeText(
-          shareUrl
-        );
-      } catch {}
-
-      alert(t.alertSaved);
-
-    } catch (error) {
-      if (
-        error?.name ===
-        "AbortError"
-      ) {
-        return;
-      }
-
-      console.error(
-        "WhatsApp error:",
-        error
-      );
-
+    } catch {
       alert(t.alertShare);
     }
   }
+}
 
   /* =======================================================
      INSTAGRAM
