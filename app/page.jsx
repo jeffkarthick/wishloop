@@ -168,19 +168,80 @@ export default function Home() {
     }, 100);
   }
 
-  function shareWhatsApp() {
-    const message =
+  async function shareWhatsApp() {
+  const card = document.getElementById("wish-card");
+
+  if (!card) return;
+
+  try {
+    const canvas = await html2canvas(card, {
+      scale: 2,
+      backgroundColor: null,
+      useCORS: true,
+      logging: false,
+    });
+
+    const blob = await new Promise((resolve) => {
+      canvas.toBlob(resolve, "image/png", 1);
+    });
+
+    if (!blob) {
+      alert("Unable to create the wish image.");
+      return;
+    }
+
+    const file = new File(
+      [blob],
+      "wishloop-greeting.png",
+      {
+        type: "image/png",
+      }
+    );
+
+    const params = new URLSearchParams();
+
+    params.set("name", name.trim());
+    params.set("to", receiver.trim());
+    params.set("lang", language);
+    params.set("wish", String(selectedWish));
+
+    const shareUrl =
+      window.location.origin +
+      window.location.pathname +
+      "?" +
+      params.toString();
+
+    const shareText =
       `${t.title}\n\n` +
       `${receiver},\n\n` +
       `${t.wishes[selectedWish]}\n\n` +
       `${t.from} ${name} ❤️\n\n` +
-      `Create your own wish with WishLoop ✨`;
+      `✨ Create your own wish:\n${shareUrl}`;
 
-    window.open(
-      `https://wa.me/?text=${encodeURIComponent(message)}`,
-      "_blank"
+    if (
+      navigator.share &&
+      navigator.canShare &&
+      navigator.canShare({ files: [file] })
+    ) {
+      await navigator.share({
+        title: "WishLoop",
+        text: shareText,
+        files: [file],
+      });
+
+      return;
+    }
+
+    alert(
+      "Your device does not support image sharing from this browser."
     );
+  } catch (error) {
+    if (error?.name === "AbortError") return;
+
+    console.error(error);
+    alert("Unable to share the wish right now.");
   }
+}
 
   async function copyLink() {
     const url = window.location.href;
