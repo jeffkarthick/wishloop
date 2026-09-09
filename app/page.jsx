@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import html2canvas from "html2canvas";
+
 const languages = [
   { id: "hi", name: "Hindi" },
   { id: "ta", name: "Tamil" },
@@ -35,7 +36,8 @@ const content = {
 
   hi: {
     title: "गणेश चतुर्थी शुभकामनाएं",
-    subtitle: "एक खूबसूरत शुभकामना बनाएं और अपने खास व्यक्ति के साथ साझा करें।",
+    subtitle:
+      "एक खूबसूरत शुभकामना बनाएं और अपने खास व्यक्ति के साथ साझा करें।",
     yourName: "आपका नाम",
     receiver: "किसे भेजें",
     namePlaceholder: "अपना नाम लिखें",
@@ -56,7 +58,8 @@ const content = {
 
   ta: {
     title: "விநாயகர் சதுர்த்தி வாழ்த்துகள்",
-    subtitle: "அழகான வாழ்த்தை உருவாக்கி உங்கள் அன்புக்குரியவருடன் பகிருங்கள்.",
+    subtitle:
+      "அழகான வாழ்த்தை உருவாக்கி உங்கள் அன்புக்குரியவருடன் பகிருங்கள்.",
     yourName: "உங்கள் பெயர்",
     receiver: "யாருக்கு அனுப்புவது",
     namePlaceholder: "உங்கள் பெயரை உள்ளிடுங்கள்",
@@ -77,7 +80,8 @@ const content = {
 
   te: {
     title: "వినాయక చవితి శుభాకాంక్షలు",
-    subtitle: "అందమైన శుభాకాంక్షను తయారు చేసి మీ ప్రత్యేక వ్యక్తితో పంచుకోండి.",
+    subtitle:
+      "అందమైన శుభాకాంక్షను తయారు చేసి మీ ప్రత్యేక వ్యక్తితో పంచుకోండి.",
     yourName: "మీ పేరు",
     receiver: "ఎవరికి పంపాలి",
     namePlaceholder: "మీ పేరు నమోదు చేయండి",
@@ -98,7 +102,8 @@ const content = {
 
   mr: {
     title: "गणेश चतुर्थीच्या हार्दिक शुभेच्छा",
-    subtitle: "सुंदर शुभेच्छा तयार करा आणि आपल्या खास व्यक्तीसोबत शेअर करा.",
+    subtitle:
+      "सुंदर शुभेच्छा तयार करा आणि आपल्या खास व्यक्तीसोबत शेअर करा.",
     yourName: "तुमचे नाव",
     receiver: "कोणाला पाठवायचे",
     namePlaceholder: "तुमचे नाव लिहा",
@@ -119,7 +124,8 @@ const content = {
 
   bn: {
     title: "গণেশ চতুর্থীর শুভেচ্ছা",
-    subtitle: "একটি সুন্দর শুভেচ্ছা তৈরি করুন এবং প্রিয়জনের সঙ্গে শেয়ার করুন।",
+    subtitle:
+      "একটি সুন্দর শুভেচ্ছা তৈরি করুন এবং প্রিয়জনের সঙ্গে শেয়ার করুন।",
     yourName: "আপনার নাম",
     receiver: "কাকে পাঠাবেন",
     namePlaceholder: "আপনার নাম লিখুন",
@@ -151,11 +157,7 @@ export default function Home() {
 
   function createWish() {
     if (!name.trim() || !receiver.trim()) {
-      alert(
-        language === "ta"
-          ? "Please enter both names."
-          : "Please enter both names."
-      );
+      alert("Please enter both names.");
       return;
     }
 
@@ -169,79 +171,92 @@ export default function Home() {
   }
 
   async function shareWhatsApp() {
-  const card = document.querySelector(".wish-card");
+    const card = document.querySelector(".wish-card");
 
-  if (!card) return;
+    if (!card) return;
 
-  try {
-    const canvas = await html2canvas(card, {
-      scale: 2,
-      backgroundColor: null,
-      useCORS: true,
-      logging: false,
-    });
-
-    const blob = await new Promise((resolve) => {
-      canvas.toBlob(resolve, "image/png", 1);
-    });
-
-    if (!blob) {
-      alert("Unable to create the wish image.");
-      return;
-    }
-
-    const file = new File(
-      [blob],
-      "wishloop-greeting.png",
-      {
-        type: "image/png",
+    try {
+      // Make sure all fonts are loaded before creating the PNG
+      if (document.fonts?.ready) {
+        await document.fonts.ready;
       }
-    );
 
-    const params = new URLSearchParams();
-
-    params.set("name", name.trim());
-    params.set("to", receiver.trim());
-    params.set("lang", language);
-    params.set("wish", String(selectedWish));
-
-    const shareUrl =
-      window.location.origin +
-      window.location.pathname +
-      "?" +
-      params.toString();
-
-    const shareText =
-      `${t.title}\n\n` +
-      `${receiver},\n\n` +
-      `${t.wishes[selectedWish]}\n\n` +
-      `${t.from} ${name} ❤️\n\n` +
-      `✨ Create your own wish:\n${shareUrl}`;
-
-    if (
-      navigator.share &&
-      navigator.canShare &&
-      navigator.canShare({ files: [file] })
-    ) {
-      await navigator.share({
-        title: "WishLoop",
-        text: shareText,
-        files: [file],
+      // Capture the actual greeting card only
+      const canvas = await html2canvas(card, {
+        scale: 2,
+        backgroundColor: "#fff8ef",
+        useCORS: true,
+        allowTaint: false,
+        logging: false,
       });
 
-      return;
+      const blob = await new Promise((resolve) => {
+        canvas.toBlob(resolve, "image/png");
+      });
+
+      if (!blob) {
+        alert("Unable to create the wish image.");
+        return;
+      }
+
+      // Create PNG file
+      const file = new File(
+        [blob],
+        "wishloop-greeting.png",
+        {
+          type: "image/png",
+        }
+      );
+
+      // Create unique WishLoop link
+      const params = new URLSearchParams();
+
+      params.set("name", name.trim());
+      params.set("to", receiver.trim());
+      params.set("lang", language);
+      params.set("wish", String(selectedWish));
+
+      const shareUrl =
+        window.location.origin +
+        window.location.pathname +
+        "?" +
+        params.toString();
+
+      // Text that goes together with the PNG
+      const shareText =
+        `✨ Create your own wish with WishLoop:\n${shareUrl}`;
+
+      // iPhone / Android native share
+      // This allows WhatsApp to receive the PNG image
+      if (
+        navigator.share &&
+        navigator.canShare &&
+        navigator.canShare({
+          files: [file],
+        })
+      ) {
+        await navigator.share({
+          title: "WishLoop",
+          text: shareText,
+          files: [file],
+        });
+
+        return;
+      }
+
+      alert(
+        "Your device does not support image sharing from this browser."
+      );
+    } catch (error) {
+      // User cancelled the share sheet
+      if (error?.name === "AbortError") {
+        return;
+      }
+
+      console.error("WhatsApp share error:", error);
+      alert("Unable to share the wish right now.");
     }
-
-    alert(
-      "Your device does not support image sharing from this browser."
-    );
-  } catch (error) {
-    if (error?.name === "AbortError") return;
-
-    console.error(error);
-    alert("Unable to share the wish right now.");
   }
-}
 
   async function copyLink() {
     const url = window.location.href;
@@ -263,7 +278,11 @@ export default function Home() {
     setName("");
     setReceiver("");
     setSelectedWish(0);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   }
 
   return (
@@ -282,7 +301,11 @@ export default function Home() {
           {languages.map((item) => (
             <button
               key={item.id}
-              className={language === item.id ? "active-language" : ""}
+              className={
+                language === item.id
+                  ? "active-language"
+                  : ""
+              }
               onClick={() => setLanguage(item.id)}
             >
               {item.name}
@@ -301,18 +324,24 @@ export default function Home() {
             <div className="form-card">
               <div className="input-group">
                 <label>{t.yourName}</label>
+
                 <input
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) =>
+                    setName(e.target.value)
+                  }
                   placeholder={t.namePlaceholder}
                 />
               </div>
 
               <div className="input-group">
                 <label>{t.receiver}</label>
+
                 <input
                   value={receiver}
-                  onChange={(e) => setReceiver(e.target.value)}
+                  onChange={(e) =>
+                    setReceiver(e.target.value)
+                  }
                   placeholder={t.receiverPlaceholder}
                 />
               </div>
@@ -329,16 +358,24 @@ export default function Home() {
                           ? "wish-option selected"
                           : "wish-option"
                       }
-                      onClick={() => setSelectedWish(index)}
+                      onClick={() =>
+                        setSelectedWish(index)
+                      }
                     >
-                      <span className="wish-number">{index + 1}</span>
+                      <span className="wish-number">
+                        {index + 1}
+                      </span>
+
                       <span>{wish}</span>
                     </button>
                   ))}
                 </div>
               </div>
 
-              <button className="create-button" onClick={createWish}>
+              <button
+                className="create-button"
+                onClick={createWish}
+              >
                 {t.create} <span>✨</span>
               </button>
             </div>
@@ -346,7 +383,9 @@ export default function Home() {
         ) : (
           <div id="wish-card" className="result-area">
             <div className="wish-card">
-              <div className="card-decoration top">✦ ✧ ✦</div>
+              <div className="card-decoration top">
+                ✦ ✧ ✦
+              </div>
 
               <div className="ganesha">🐘</div>
 
@@ -370,21 +409,35 @@ export default function Home() {
                 <strong>{name}</strong>
               </p>
 
-              <div className="card-decoration bottom">✦ ✧ ✦</div>
+              <div className="card-decoration bottom">
+                ✦ ✧ ✦
+              </div>
             </div>
 
             <div className="action-buttons">
-              <button className="whatsapp-button" onClick={shareWhatsApp}>
+              <button
+                className="whatsapp-button"
+                onClick={shareWhatsApp}
+              >
                 <span>💬</span> {t.share}
               </button>
 
-              <button className="copy-button" onClick={copyLink}>
-                <span>{copied ? "✓" : "🔗"}</span>
+              <button
+                className="copy-button"
+                onClick={copyLink}
+              >
+                <span>
+                  {copied ? "✓" : "🔗"}
+                </span>
+
                 {copied ? "Copied!" : t.copy}
               </button>
             </div>
 
-            <button className="another-button" onClick={reset}>
+            <button
+              className="another-button"
+              onClick={reset}
+            >
               ↻ {t.another}
             </button>
           </div>
