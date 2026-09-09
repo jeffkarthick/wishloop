@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import html2canvas from "html2canvas";
 
 const languages = [
@@ -15,7 +15,8 @@ const languages = [
 const content = {
   en: {
     title: "Ganesh Chaturthi Wishes",
-    subtitle: "Create a beautiful wish and share it with someone special.",
+    subtitle:
+      "Create a beautiful wish and share it with someone special.",
     yourName: "Your Name",
     receiver: "Send To",
     namePlaceholder: "Enter your name",
@@ -155,6 +156,57 @@ export default function Home() {
 
   const t = content[language];
 
+  /*
+   * Load a shared WishLoop link.
+   *
+   * Example:
+   * ?name=jeff&to=karthik&lang=ta&wish=0
+   */
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    const sharedName = params.get("name");
+    const sharedReceiver = params.get("to");
+    const sharedLanguage = params.get("lang");
+    const sharedWish = params.get("wish");
+
+    if (sharedName && sharedReceiver) {
+      setName(sharedName);
+      setReceiver(sharedReceiver);
+
+      if (sharedLanguage && content[sharedLanguage]) {
+        setLanguage(sharedLanguage);
+      }
+
+      if (
+        sharedWish !== null &&
+        !Number.isNaN(Number(sharedWish)) &&
+        Number(sharedWish) >= 0 &&
+        Number(sharedWish) <= 2
+      ) {
+        setSelectedWish(Number(sharedWish));
+      }
+
+      setGenerated(true);
+    }
+  }, []);
+
+  function getShareUrl() {
+    const params = new URLSearchParams();
+
+    params.set("name", name.trim());
+    params.set("to", receiver.trim());
+    params.set("lang", language);
+    params.set("wish", String(selectedWish));
+
+    return (
+      window.location.origin +
+      window.location.pathname +
+      "?" +
+      params.toString()
+    );
+  }
+
   function createWish() {
     if (!name.trim() || !receiver.trim()) {
       alert("Please enter both names.");
@@ -166,7 +218,9 @@ export default function Home() {
     setTimeout(() => {
       document
         .getElementById("wish-card")
-        ?.scrollIntoView({ behavior: "smooth" });
+        ?.scrollIntoView({
+          behavior: "smooth",
+        });
     }, 100);
   }
 
@@ -176,22 +230,74 @@ export default function Home() {
     if (!card) return;
 
     try {
-      // Make sure all fonts are loaded before creating the PNG
+      /*
+       * Make sure fonts are fully loaded.
+       * This is especially important for Hindi,
+       * Tamil, Telugu, Marathi and Bengali.
+       */
       if (document.fonts?.ready) {
         await document.fonts.ready;
       }
 
-      // Capture the actual greeting card only
+      /*
+       * Create PNG from the SAME website card.
+       *
+       * The clone settings below prevent CSS animations
+       * from making the captured image faded or invisible.
+       */
       const canvas = await html2canvas(card, {
         scale: 2,
         backgroundColor: "#fff8ef",
         useCORS: true,
         allowTaint: false,
         logging: false,
+
+        onclone: (clonedDocument) => {
+          const clonedCard =
+            clonedDocument.querySelector(".wish-card");
+
+          if (clonedCard) {
+            clonedCard.style.setProperty(
+              "animation",
+              "none",
+              "important"
+            );
+
+            clonedCard.style.setProperty(
+              "opacity",
+              "1",
+              "important"
+            );
+
+            clonedCard.style.setProperty(
+              "transform",
+              "none",
+              "important"
+            );
+
+            clonedCard.style.setProperty(
+              "filter",
+              "none",
+              "important"
+            );
+
+            clonedCard.style.setProperty(
+              "visibility",
+              "visible",
+              "important"
+            );
+          }
+        },
       });
 
+      /*
+       * Convert the exact card screenshot into PNG.
+       */
       const blob = await new Promise((resolve) => {
-        canvas.toBlob(resolve, "image/png");
+        canvas.toBlob(
+          resolve,
+          "image/png"
+        );
       });
 
       if (!blob) {
@@ -199,7 +305,9 @@ export default function Home() {
         return;
       }
 
-      // Create PNG file
+      /*
+       * PNG file for native iPhone / Android sharing.
+       */
       const file = new File(
         [blob],
         "wishloop-greeting.png",
@@ -208,26 +316,26 @@ export default function Home() {
         }
       );
 
-      // Create unique WishLoop link
-      const params = new URLSearchParams();
+      /*
+       * Unique WishLoop link.
+       */
+      const shareUrl = getShareUrl();
 
-      params.set("name", name.trim());
-      params.set("to", receiver.trim());
-      params.set("lang", language);
-      params.set("wish", String(selectedWish));
-
-      const shareUrl =
-        window.location.origin +
-        window.location.pathname +
-        "?" +
-        params.toString();
-
-      // Text that goes together with the PNG
+      /*
+       * Only the viral CTA + link.
+       *
+       * The actual greeting text is already
+       * inside the PNG image.
+       */
       const shareText =
         `✨ Create your own wish with WishLoop:\n${shareUrl}`;
 
-      // iPhone / Android native share
-      // This allows WhatsApp to receive the PNG image
+      /*
+       * Native share.
+       *
+       * On iPhone this opens the normal share sheet.
+       * Selecting WhatsApp sends the PNG + text/link.
+       */
       if (
         navigator.share &&
         navigator.canShare &&
@@ -244,25 +352,42 @@ export default function Home() {
         return;
       }
 
+      /*
+       * Browser does not support file sharing.
+       */
       alert(
         "Your device does not support image sharing from this browser."
       );
     } catch (error) {
-      // User cancelled the share sheet
+      /*
+       * User cancelled the share sheet.
+       */
       if (error?.name === "AbortError") {
         return;
       }
 
-      console.error("WhatsApp share error:", error);
-      alert("Unable to share the wish right now.");
+      console.error(
+        "WishLoop WhatsApp share error:",
+        error
+      );
+
+      alert(
+        "Unable to share the wish right now."
+      );
     }
   }
 
   async function copyLink() {
-    const url = window.location.href;
+    if (!name.trim() || !receiver.trim()) {
+      alert("Please enter both names.");
+      return;
+    }
+
+    const url = getShareUrl();
 
     try {
       await navigator.clipboard.writeText(url);
+
       setCopied(true);
 
       setTimeout(() => {
@@ -279,6 +404,16 @@ export default function Home() {
     setReceiver("");
     setSelectedWish(0);
 
+    /*
+     * Remove the shared query parameters
+     * when creating another wish.
+     */
+    window.history.replaceState(
+      {},
+      "",
+      window.location.pathname
+    );
+
     window.scrollTo({
       top: 0,
       behavior: "smooth",
@@ -287,13 +422,24 @@ export default function Home() {
 
   return (
     <main className="page">
-      <div className="floating floating-one">🪔</div>
-      <div className="floating floating-two">✨</div>
-      <div className="floating floating-three">🌸</div>
+      <div className="floating floating-one">
+        🪔
+      </div>
+
+      <div className="floating floating-two">
+        ✨
+      </div>
+
+      <div className="floating floating-three">
+        🌸
+      </div>
 
       <section className="hero">
         <div className="brand">
-          <div className="brand-icon">ॐ</div>
+          <div className="brand-icon">
+            ॐ
+          </div>
+
           <span>WishLoop</span>
         </div>
 
@@ -306,7 +452,9 @@ export default function Home() {
                   ? "active-language"
                   : ""
               }
-              onClick={() => setLanguage(item.id)}
+              onClick={() =>
+                setLanguage(item.id)
+              }
             >
               {item.name}
             </button>
@@ -315,60 +463,82 @@ export default function Home() {
 
         {!generated ? (
           <>
-            <div className="hero-icon">🐘</div>
+            <div className="hero-icon">
+              🐘
+            </div>
 
             <h1>{t.title}</h1>
 
-            <p className="subtitle">{t.subtitle}</p>
+            <p className="subtitle">
+              {t.subtitle}
+            </p>
 
             <div className="form-card">
               <div className="input-group">
-                <label>{t.yourName}</label>
+                <label>
+                  {t.yourName}
+                </label>
 
                 <input
                   value={name}
                   onChange={(e) =>
                     setName(e.target.value)
                   }
-                  placeholder={t.namePlaceholder}
+                  placeholder={
+                    t.namePlaceholder
+                  }
                 />
               </div>
 
               <div className="input-group">
-                <label>{t.receiver}</label>
+                <label>
+                  {t.receiver}
+                </label>
 
                 <input
                   value={receiver}
                   onChange={(e) =>
-                    setReceiver(e.target.value)
+                    setReceiver(
+                      e.target.value
+                    )
                   }
-                  placeholder={t.receiverPlaceholder}
+                  placeholder={
+                    t.receiverPlaceholder
+                  }
                 />
               </div>
 
               <div className="wish-section">
-                <label>{t.choose}</label>
+                <label>
+                  {t.choose}
+                </label>
 
                 <div className="wish-options">
-                  {t.wishes.map((wish, index) => (
-                    <button
-                      key={index}
-                      className={
-                        selectedWish === index
-                          ? "wish-option selected"
-                          : "wish-option"
-                      }
-                      onClick={() =>
-                        setSelectedWish(index)
-                      }
-                    >
-                      <span className="wish-number">
-                        {index + 1}
-                      </span>
+                  {t.wishes.map(
+                    (wish, index) => (
+                      <button
+                        key={index}
+                        className={
+                          selectedWish === index
+                            ? "wish-option selected"
+                            : "wish-option"
+                        }
+                        onClick={() =>
+                          setSelectedWish(
+                            index
+                          )
+                        }
+                      >
+                        <span className="wish-number">
+                          {index + 1}
+                        </span>
 
-                      <span>{wish}</span>
-                    </button>
-                  ))}
+                        <span>
+                          {wish}
+                        </span>
+                      </button>
+                    )
+                  )}
                 </div>
               </div>
 
@@ -376,37 +546,58 @@ export default function Home() {
                 className="create-button"
                 onClick={createWish}
               >
-                {t.create} <span>✨</span>
+                {t.create}
+                <span>✨</span>
               </button>
             </div>
           </>
         ) : (
-          <div id="wish-card" className="result-area">
+          <div
+            id="wish-card"
+            className="result-area"
+          >
             <div className="wish-card">
               <div className="card-decoration top">
                 ✦ ✧ ✦
               </div>
 
-              <div className="ganesha">🐘</div>
+              <div className="ganesha">
+                🐘
+              </div>
 
-              <div className="om">ॐ</div>
+              <div className="om">
+                ॐ
+              </div>
 
-              <h2>{t.title}</h2>
+              <h2>
+                {t.title}
+              </h2>
 
               <div className="recipient">
-                {t.for} <strong>{receiver}</strong>
+                {t.for}{" "}
+                <strong>
+                  {receiver}
+                </strong>
               </div>
 
               <div className="wish-message">
-                {t.wishes[selectedWish]}
+                {
+                  t.wishes[
+                    selectedWish
+                  ]
+                }
               </div>
 
-              <div className="card-divider">❖</div>
+              <div className="card-divider">
+                ❖
+              </div>
 
               <p className="from-text">
                 {t.from}
                 <br />
-                <strong>{name}</strong>
+                <strong>
+                  {name}
+                </strong>
               </p>
 
               <div className="card-decoration bottom">
@@ -419,7 +610,8 @@ export default function Home() {
                 className="whatsapp-button"
                 onClick={shareWhatsApp}
               >
-                <span>💬</span> {t.share}
+                <span>💬</span>{" "}
+                {t.share}
               </button>
 
               <button
@@ -427,10 +619,14 @@ export default function Home() {
                 onClick={copyLink}
               >
                 <span>
-                  {copied ? "✓" : "🔗"}
+                  {copied
+                    ? "✓"
+                    : "🔗"}
                 </span>
 
-                {copied ? "Copied!" : t.copy}
+                {copied
+                  ? "Copied!"
+                  : t.copy}
               </button>
             </div>
 
@@ -444,7 +640,10 @@ export default function Home() {
         )}
 
         <footer>
-          <span>WishLoop</span> • Create. Share. Celebrate. ✨
+          <span>
+            WishLoop
+          </span>{" "}
+          • Create. Share. Celebrate. ✨
         </footer>
       </section>
     </main>
