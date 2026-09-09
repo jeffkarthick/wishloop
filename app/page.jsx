@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-
+import html2canvas from "html2canvas";
 const languages = [
   { id: "hi", name: "Hindi" },
   { id: "ta", name: "Tamil" },
