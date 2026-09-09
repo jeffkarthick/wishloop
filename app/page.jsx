@@ -139,11 +139,9 @@ export default function Home() {
     }, 100);
   }
 
-  /*
-   * ============================================
-   * CREATE SHARE IMAGE
-   * ============================================
-   */
+  /* ==========================================
+     CREATE PNG
+  ========================================== */
 
   async function createShareImage() {
     const shareCard =
@@ -159,13 +157,9 @@ export default function Home() {
 
     const canvas = await html2canvas(shareCard, {
       scale: 2,
-
       backgroundColor: "#ff1744",
-
       useCORS: true,
-
       allowTaint: false,
-
       logging: false,
 
       onclone: (clonedDocument) => {
@@ -224,11 +218,9 @@ export default function Home() {
     return blob;
   }
 
-  /*
-   * ============================================
-   * WHATSAPP SHARE
-   * ============================================
-   */
+  /* ==========================================
+     WHATSAPP
+  ========================================== */
 
   async function shareWhatsApp() {
     try {
@@ -266,20 +258,16 @@ export default function Home() {
       const imageUrl =
         URL.createObjectURL(blob);
 
-      const downloadLink =
+      const link =
         document.createElement("a");
 
-      downloadLink.href = imageUrl;
-      downloadLink.download =
+      link.href = imageUrl;
+      link.download =
         "wishloop-greeting.png";
 
-      document.body.appendChild(
-        downloadLink
-      );
-
-      downloadLink.click();
-
-      downloadLink.remove();
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
 
       URL.revokeObjectURL(imageUrl);
 
@@ -298,7 +286,7 @@ export default function Home() {
       }
 
       console.error(
-        "WhatsApp share error:",
+        "WhatsApp error:",
         error
       );
 
@@ -308,55 +296,18 @@ export default function Home() {
     }
   }
 
-  /*
-   * ============================================
-   * INSTAGRAM SHARE
-   * ============================================
-   */
+  /* ==========================================
+     INSTAGRAM
+  ========================================== */
 
   async function shareInstagram() {
     try {
       const blob = await createShareImage();
 
-      const file = new File(
-        [blob],
-        "wishloop-greeting.png",
-        {
-          type: "image/png",
-        }
-      );
-
       const shareUrl = getShareUrl();
 
-      const shareText =
-        `✨ Create your own wish with WishLoop:\n${shareUrl}`;
-
       /*
-       * Mobile browsers that support file sharing
-       * will open the native share sheet.
-       *
-       * User can choose Instagram from there.
-       */
-
-      if (
-        navigator.share &&
-        navigator.canShare &&
-        navigator.canShare({
-          files: [file],
-        })
-      ) {
-        await navigator.share({
-          title: "WishLoop",
-          text: shareText,
-          files: [file],
-        });
-
-        return;
-      }
-
-      /*
-       * Fallback:
-       * Save the PNG and copy the WishLoop link.
+       * First save the greeting image
        */
 
       const imageUrl =
@@ -378,7 +329,17 @@ export default function Home() {
 
       downloadLink.remove();
 
-      URL.revokeObjectURL(imageUrl);
+      /*
+       * Keep URL available for a little while
+       */
+
+      setTimeout(() => {
+        URL.revokeObjectURL(imageUrl);
+      }, 5000);
+
+      /*
+       * Copy WishLoop link
+       */
 
       try {
         await navigator.clipboard.writeText(
@@ -386,16 +347,43 @@ export default function Home() {
         );
       } catch {}
 
-      alert(
-        "The greeting image was saved and your WishLoop link was copied. Open Instagram and share the image."
-      );
-    } catch (error) {
-      if (error?.name === "AbortError") {
-        return;
-      }
+      /*
+       * Open Instagram App
+       */
 
+      let instagramOpened = false;
+
+      const handleVisibility = () => {
+        instagramOpened = true;
+      };
+
+      document.addEventListener(
+        "visibilitychange",
+        handleVisibility,
+        { once: true }
+      );
+
+      /*
+       * Try Instagram App
+       */
+
+      window.location.href =
+        "instagram://app";
+
+      /*
+       * Fallback to Instagram website
+       */
+
+      setTimeout(() => {
+        if (!instagramOpened) {
+          window.location.href =
+            "https://www.instagram.com/";
+        }
+      }, 1800);
+
+    } catch (error) {
       console.error(
-        "Instagram share error:",
+        "Instagram error:",
         error
       );
 
@@ -405,11 +393,9 @@ export default function Home() {
     }
   }
 
-  /*
-   * ============================================
-   * COPY LINK
-   * ============================================
-   */
+  /* ==========================================
+     COPY LINK
+  ========================================== */
 
   async function copyLink() {
     try {
@@ -431,11 +417,9 @@ export default function Home() {
     }
   }
 
-  /*
-   * ============================================
-   * RESET
-   * ============================================
-   */
+  /* ==========================================
+     RESET
+  ========================================== */
 
   function reset() {
     setName("");
@@ -459,11 +443,12 @@ export default function Home() {
   return (
     <main className="page-shell">
 
-      {/* ================================= */}
-      {/* LANGUAGE BAR */}
-      {/* ================================= */}
+      {/* ===================================== */}
+      {/* LANGUAGE */}
+      {/* ===================================== */}
 
       <div className="language-bar">
+
         <div className="language-scroll">
 
           {languages.map((item) => (
@@ -490,12 +475,13 @@ export default function Home() {
           ))}
 
         </div>
+
       </div>
 
 
-      {/* ================================= */}
+      {/* ===================================== */}
       {/* HERO */}
-      {/* ================================= */}
+      {/* ===================================== */}
 
       <section className="hero-section">
 
@@ -536,12 +522,13 @@ export default function Home() {
           </p>
 
         </div>
+
       </section>
 
 
-      {/* ================================= */}
+      {/* ===================================== */}
       {/* CREATE */}
-      {/* ================================= */}
+      {/* ===================================== */}
 
       <section className="create-section">
 
@@ -566,8 +553,6 @@ export default function Home() {
           </div>
 
 
-          {/* NAME */}
-
           <div className="input-group">
 
             <label>
@@ -587,8 +572,6 @@ export default function Home() {
           </div>
 
 
-          {/* RECEIVER */}
-
           <div className="input-group">
 
             <label>
@@ -607,8 +590,6 @@ export default function Home() {
 
           </div>
 
-
-          {/* WISH OPTIONS */}
 
           <div className="input-group">
 
@@ -641,8 +622,7 @@ export default function Home() {
                       {wish}
                     </span>
 
-                    {selectedWish ===
-                      index && (
+                    {selectedWish === index && (
                       <span className="wish-check">
                         ✓
                       </span>
@@ -654,31 +634,30 @@ export default function Home() {
               )}
 
             </div>
+
           </div>
 
-
-          {/* CREATE BUTTON */}
 
           <button
             className="primary-btn"
             onClick={createWish}
           >
             <span>✨</span>
-
             Create My Wish
-
             <span>→</span>
           </button>
 
         </div>
+
       </section>
 
 
-      {/* ================================= */}
-      {/* GENERATED RESULT */}
-      {/* ================================= */}
+      {/* ===================================== */}
+      {/* RESULT */}
+      {/* ===================================== */}
 
       {generated && (
+
         <section className="result-section">
 
           <div
@@ -739,7 +718,7 @@ export default function Home() {
 
 
           {/* ================================= */}
-          {/* SHARE BUTTONS */}
+          {/* ACTION BUTTONS */}
           {/* ================================= */}
 
           <div className="result-actions">
@@ -767,7 +746,9 @@ export default function Home() {
               onClick={copyLink}
             >
               <span>
-                {copied ? "✓" : "🔗"}
+                {copied
+                  ? "✓"
+                  : "🔗"}
               </span>
 
               {copied
@@ -786,12 +767,13 @@ export default function Home() {
           </div>
 
         </section>
+
       )}
 
 
-      {/* ================================================== */}
-      {/* PREMIUM WHATSAPP / INSTAGRAM SHARE IMAGE */}
-      {/* ================================================== */}
+      {/* ===================================== */}
+      {/* HIDDEN SHARE CARD */}
+      {/* ===================================== */}
 
       <div
         id="whatsapp-share-card"
@@ -843,8 +825,6 @@ export default function Home() {
           }}
         >
 
-          {/* TOP DECORATION */}
-
           <div
             style={{
               position: "absolute",
@@ -866,31 +846,6 @@ export default function Home() {
           >
             🌺
           </div>
-
-          <div
-            style={{
-              position: "absolute",
-              top: "125px",
-              left: "75px",
-              fontSize: "24px",
-            }}
-          >
-            ✦
-          </div>
-
-          <div
-            style={{
-              position: "absolute",
-              top: "125px",
-              right: "75px",
-              fontSize: "24px",
-            }}
-          >
-            ✦
-          </div>
-
-
-          {/* GANESHA */}
 
           <div
             style={{
@@ -922,66 +877,40 @@ export default function Home() {
           </div>
 
 
-          {/* OM */}
-
           <div
             style={{
               textAlign: "center",
-
               fontSize: "34px",
-
               fontWeight: "800",
-
               color: "#fffde7",
-
-              textShadow:
-                "0 3px 10px rgba(0,0,0,0.3)",
             }}
           >
             ॐ
           </div>
 
 
-          {/* FESTIVAL TITLE */}
-
           <div
             style={{
               textAlign: "center",
-
               marginTop: "12px",
-
               fontSize: "22px",
-
               fontWeight: "900",
-
               letterSpacing: "6px",
-
               color: "#fffde7",
-
-              textShadow:
-                "0 3px 12px rgba(0,0,0,0.35)",
             }}
           >
             GANESH CHATURTHI
           </div>
 
 
-          {/* MAIN TITLE */}
-
           <div
             style={{
               textAlign: "center",
-
               marginTop: "12px",
-
               fontSize: "58px",
-
               lineHeight: "1.15",
-
               fontWeight: "900",
-
               color: "#ffffff",
-
               textShadow:
                 "0 5px 18px rgba(120,0,0,0.45)",
             }}
@@ -990,55 +919,37 @@ export default function Home() {
           </div>
 
 
-          {/* RECEIVER */}
-
           <div
             style={{
               textAlign: "center",
-
               marginTop: "35px",
-
               fontSize: "24px",
-
               color: "#fffde7",
             }}
           >
             Dear
           </div>
 
+
           <div
             style={{
               textAlign: "center",
-
               marginTop: "7px",
-
               fontSize: "52px",
-
               lineHeight: "1.1",
-
               fontWeight: "900",
-
               color: "#ffffff",
-
               wordBreak: "break-word",
-
-              textShadow:
-                "0 4px 14px rgba(120,0,0,0.4)",
             }}
           >
             {receiver}
           </div>
 
 
-          {/* WISH */}
-
           <div
             style={{
               marginTop: "45px",
-
-              padding:
-                "45px 42px",
-
+              padding: "45px 42px",
               borderRadius: "34px",
 
               background:
@@ -1065,18 +976,12 @@ export default function Home() {
           </div>
 
 
-          {/* DIVIDER */}
-
           <div
             style={{
               textAlign: "center",
-
               marginTop: "40px",
-
               fontSize: "32px",
-
               color: "#fffde7",
-
               letterSpacing: "12px",
             }}
           >
@@ -1084,100 +989,68 @@ export default function Home() {
           </div>
 
 
-          {/* SENDER */}
-
           <div
             style={{
               textAlign: "center",
-
               marginTop: "25px",
-
               fontSize: "22px",
-
               color: "#fffde7",
             }}
           >
             With love,
           </div>
 
+
           <div
             style={{
               textAlign: "center",
-
               marginTop: "8px",
-
               fontSize: "43px",
-
               fontWeight: "900",
-
               color: "#ffffff",
-
               wordBreak: "break-word",
-
-              textShadow:
-                "0 4px 14px rgba(120,0,0,0.4)",
             }}
           >
             {name}
           </div>
 
 
-          {/* BRAND */}
-
           <div
             style={{
               textAlign: "center",
-
               marginTop: "48px",
-
               paddingTop: "25px",
-
               borderTop:
                 "2px solid rgba(255,255,255,0.45)",
-
               fontSize: "27px",
-
               fontWeight: "900",
-
               letterSpacing: "4px",
-
               color: "#fffde7",
             }}
           >
             🐘 WISHLOOP ✨
           </div>
 
+
           <div
             style={{
               textAlign: "center",
-
               marginTop: "15px",
-
               fontSize: "20px",
-
               color: "#fffde7",
-
-              opacity: 0.95,
             }}
           >
             Create. Share. Celebrate.
           </div>
 
 
-          {/* BOTTOM DECORATION */}
-
           <div
             style={{
               position: "absolute",
-
               bottom: "25px",
-
               left: "0",
-
               right: "0",
-
               textAlign: "center",
-
               fontSize: "30px",
             }}
           >
@@ -1188,9 +1061,9 @@ export default function Home() {
       </div>
 
 
-      {/* ================================= */}
+      {/* ===================================== */}
       {/* FOOTER */}
-      {/* ================================= */}
+      {/* ===================================== */}
 
       <footer className="site-footer">
 
