@@ -301,98 +301,80 @@ export default function Home() {
   ========================================== */
 
   async function shareInstagram() {
-    try {
-      const blob = await createShareImage();
+  try {
+    const blob = await createShareImage();
 
-      const shareUrl = getShareUrl();
+    const file = new File(
+      [blob],
+      "wishloop-greeting.png",
+      {
+        type: "image/png",
+      }
+    );
 
-      /*
-       * First save the greeting image
-       */
+    const shareUrl = getShareUrl();
 
-      const imageUrl =
-        URL.createObjectURL(blob);
+    const shareText =
+      `✨ Create your own wish with WishLoop:\n${shareUrl}`;
 
-      const downloadLink =
-        document.createElement("a");
+    // Open native iPhone / Android Share Sheet
+    if (
+      navigator.share &&
+      navigator.canShare &&
+      navigator.canShare({
+        files: [file],
+      })
+    ) {
+      await navigator.share({
+        title: "WishLoop",
+        text: shareText,
+        files: [file],
+      });
 
-      downloadLink.href = imageUrl;
-
-      downloadLink.download =
-        "wishloop-greeting.png";
-
-      document.body.appendChild(
-        downloadLink
-      );
-
-      downloadLink.click();
-
-      downloadLink.remove();
-
-      /*
-       * Keep URL available for a little while
-       */
-
-      setTimeout(() => {
-        URL.revokeObjectURL(imageUrl);
-      }, 5000);
-
-      /*
-       * Copy WishLoop link
-       */
-
-      try {
-        await navigator.clipboard.writeText(
-          shareUrl
-        );
-      } catch {}
-
-      /*
-       * Open Instagram App
-       */
-
-      let instagramOpened = false;
-
-      const handleVisibility = () => {
-        instagramOpened = true;
-      };
-
-      document.addEventListener(
-        "visibilitychange",
-        handleVisibility,
-        { once: true }
-      );
-
-      /*
-       * Try Instagram App
-       */
-
-      window.location.href =
-        "instagram://app";
-
-      /*
-       * Fallback to Instagram website
-       */
-
-      setTimeout(() => {
-        if (!instagramOpened) {
-          window.location.href =
-            "https://www.instagram.com/";
-        }
-      }, 1800);
-
-    } catch (error) {
-      console.error(
-        "Instagram error:",
-        error
-      );
-
-      alert(
-        "Unable to create the Instagram image right now."
-      );
+      return;
     }
-  }
 
+    // Fallback: save image + copy link
+    const imageUrl = URL.createObjectURL(blob);
+
+    const downloadLink =
+      document.createElement("a");
+
+    downloadLink.href = imageUrl;
+    downloadLink.download =
+      "wishloop-greeting.png";
+
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    downloadLink.remove();
+
+    URL.revokeObjectURL(imageUrl);
+
+    try {
+      await navigator.clipboard.writeText(
+        shareUrl
+      );
+    } catch {}
+
+    alert(
+      "Your greeting image was saved and your WishLoop link was copied."
+    );
+
+  } catch (error) {
+    if (error?.name === "AbortError") {
+      return;
+    }
+
+    console.error(
+      "Instagram share error:",
+      error
+    );
+
+    alert(
+      "Unable to share the wish right now."
+    );
+  }
+}
   /* ==========================================
      COPY LINK
   ========================================== */
