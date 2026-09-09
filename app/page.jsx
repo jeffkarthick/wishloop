@@ -156,12 +156,6 @@ export default function Home() {
 
   const t = content[language];
 
-  /*
-   * Load a shared WishLoop link.
-   *
-   * Example:
-   * ?name=jeff&to=karthik&lang=ta&wish=0
-   */
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
@@ -225,36 +219,32 @@ export default function Home() {
   }
 
   async function shareWhatsApp() {
-    const card = document.querySelector(".wish-card");
+    const shareCard =
+      document.getElementById("whatsapp-share-card");
 
-    if (!card) return;
+    if (!shareCard) return;
 
     try {
-      /*
-       * Make sure fonts are fully loaded.
-       * This is especially important for Hindi,
-       * Tamil, Telugu, Marathi and Bengali.
-       */
       if (document.fonts?.ready) {
         await document.fonts.ready;
       }
 
       /*
-       * Create PNG from the SAME website card.
-       *
-       * The clone settings below prevent CSS animations
-       * from making the captured image faded or invisible.
+       * Capture the special WhatsApp card.
+       * The normal website card is NOT changed.
        */
-      const canvas = await html2canvas(card, {
+      const canvas = await html2canvas(shareCard, {
         scale: 2,
-        backgroundColor: "#fff8ef",
+        backgroundColor: "#8b1538",
         useCORS: true,
         allowTaint: false,
         logging: false,
 
         onclone: (clonedDocument) => {
           const clonedCard =
-            clonedDocument.querySelector(".wish-card");
+            clonedDocument.getElementById(
+              "whatsapp-share-card"
+            );
 
           if (clonedCard) {
             clonedCard.style.setProperty(
@@ -270,6 +260,12 @@ export default function Home() {
             );
 
             clonedCard.style.setProperty(
+              "visibility",
+              "visible",
+              "important"
+            );
+
+            clonedCard.style.setProperty(
               "transform",
               "none",
               "important"
@@ -280,19 +276,10 @@ export default function Home() {
               "none",
               "important"
             );
-
-            clonedCard.style.setProperty(
-              "visibility",
-              "visible",
-              "important"
-            );
           }
         },
       });
 
-      /*
-       * Convert the exact card screenshot into PNG.
-       */
       const blob = await new Promise((resolve) => {
         canvas.toBlob(
           resolve,
@@ -305,9 +292,6 @@ export default function Home() {
         return;
       }
 
-      /*
-       * PNG file for native iPhone / Android sharing.
-       */
       const file = new File(
         [blob],
         "wishloop-greeting.png",
@@ -316,25 +300,14 @@ export default function Home() {
         }
       );
 
-      /*
-       * Unique WishLoop link.
-       */
       const shareUrl = getShareUrl();
 
-      /*
-       * Only the viral CTA + link.
-       *
-       * The actual greeting text is already
-       * inside the PNG image.
-       */
       const shareText =
         `✨ Create your own wish with WishLoop:\n${shareUrl}`;
 
       /*
-       * Native share.
-       *
-       * On iPhone this opens the normal share sheet.
-       * Selecting WhatsApp sends the PNG + text/link.
+       * Native iPhone / Android share.
+       * PNG + WishLoop link.
        */
       if (
         navigator.share &&
@@ -353,21 +326,44 @@ export default function Home() {
       }
 
       /*
-       * Browser does not support file sharing.
+       * Fallback:
+       * Download the PNG if file sharing isn't supported.
        */
+      const imageUrl =
+        URL.createObjectURL(blob);
+
+      const downloadLink =
+        document.createElement("a");
+
+      downloadLink.href = imageUrl;
+      downloadLink.download =
+        "wishloop-greeting.png";
+
+      document.body.appendChild(
+        downloadLink
+      );
+
+      downloadLink.click();
+      downloadLink.remove();
+
+      URL.revokeObjectURL(imageUrl);
+
+      try {
+        await navigator.clipboard.writeText(
+          shareUrl
+        );
+      } catch {}
+
       alert(
-        "Your device does not support image sharing from this browser."
+        "The PNG was saved. You can share it on WhatsApp and paste your WishLoop link."
       );
     } catch (error) {
-      /*
-       * User cancelled the share sheet.
-       */
       if (error?.name === "AbortError") {
         return;
       }
 
       console.error(
-        "WishLoop WhatsApp share error:",
+        "WishLoop share error:",
         error
       );
 
@@ -404,10 +400,6 @@ export default function Home() {
     setReceiver("");
     setSelectedWish(0);
 
-    /*
-     * Remove the shared query parameters
-     * when creating another wish.
-     */
     window.history.replaceState(
       {},
       "",
@@ -552,97 +544,367 @@ export default function Home() {
             </div>
           </>
         ) : (
-          <div
-            id="wish-card"
-            className="result-area"
-          >
-            <div className="wish-card">
-              <div className="card-decoration top">
-                ✦ ✧ ✦
-              </div>
-
-              <div className="ganesha">
-                🐘
-              </div>
-
-              <div className="om">
-                ॐ
-              </div>
-
-              <h2>
-                {t.title}
-              </h2>
-
-              <div className="recipient">
-                {t.for}{" "}
-                <strong>
-                  {receiver}
-                </strong>
-              </div>
-
-              <div className="wish-message">
-                {
-                  t.wishes[
-                    selectedWish
-                  ]
-                }
-              </div>
-
-              <div className="card-divider">
-                ❖
-              </div>
-
-              <p className="from-text">
-                {t.from}
-                <br />
-                <strong>
-                  {name}
-                </strong>
-              </p>
-
-              <div className="card-decoration bottom">
-                ✦ ✧ ✦
-              </div>
-            </div>
-
-            <div className="action-buttons">
-              <button
-                className="whatsapp-button"
-                onClick={shareWhatsApp}
-              >
-                <span>💬</span>{" "}
-                {t.share}
-              </button>
-
-              <button
-                className="copy-button"
-                onClick={copyLink}
-              >
-                <span>
-                  {copied
-                    ? "✓"
-                    : "🔗"}
-                </span>
-
-                {copied
-                  ? "Copied!"
-                  : t.copy}
-              </button>
-            </div>
-
-            <button
-              className="another-button"
-              onClick={reset}
+          <>
+            {/* NORMAL WEBSITE CARD — UNCHANGED */}
+            <div
+              id="wish-card"
+              className="result-area"
             >
-              ↻ {t.another}
-            </button>
-          </div>
+              <div className="wish-card">
+                <div className="card-decoration top">
+                  ✦ ✧ ✦
+                </div>
+
+                <div className="ganesha">
+                  🐘
+                </div>
+
+                <div className="om">
+                  ॐ
+                </div>
+
+                <h2>{t.title}</h2>
+
+                <div className="recipient">
+                  {t.for}{" "}
+                  <strong>
+                    {receiver}
+                  </strong>
+                </div>
+
+                <div className="wish-message">
+                  {
+                    t.wishes[
+                      selectedWish
+                    ]
+                  }
+                </div>
+
+                <div className="card-divider">
+                  ❖
+                </div>
+
+                <p className="from-text">
+                  {t.from}
+                  <br />
+                  <strong>
+                    {name}
+                  </strong>
+                </p>
+
+                <div className="card-decoration bottom">
+                  ✦ ✧ ✦
+                </div>
+              </div>
+
+              <div className="action-buttons">
+                <button
+                  className="whatsapp-button"
+                  onClick={
+                    shareWhatsApp
+                  }
+                >
+                  <span>💬</span>{" "}
+                  {t.share}
+                </button>
+
+                <button
+                  className="copy-button"
+                  onClick={copyLink}
+                >
+                  <span>
+                    {copied
+                      ? "✓"
+                      : "🔗"}
+                  </span>
+
+                  {copied
+                    ? "Copied!"
+                    : t.copy}
+                </button>
+              </div>
+
+              <button
+                className="another-button"
+                onClick={reset}
+              >
+                ↻ {t.another}
+              </button>
+            </div>
+
+            {/* =================================================
+                PREMIUM WHATSAPP SHARE CARD
+                Hidden from the normal website.
+                Only used to create the PNG.
+               ================================================= */}
+            <div
+              id="whatsapp-share-card"
+              style={{
+                position: "fixed",
+                left: "-10000px",
+                top: "0",
+                width: "900px",
+                minHeight: "1200px",
+                padding: "55px",
+                boxSizing: "border-box",
+                overflow: "hidden",
+                background:
+                  "linear-gradient(145deg, #6f0f2d 0%, #94163d 45%, #c44725 100%)",
+                fontFamily:
+                  "Arial, Helvetica, sans-serif",
+                color: "#fff8e7",
+              }}
+            >
+              {/* Outer gold frame */}
+              <div
+                style={{
+                  width: "100%",
+                  minHeight: "100%",
+                  boxSizing: "border-box",
+                  border:
+                    "4px solid #f6c85f",
+                  borderRadius: "42px",
+                  padding: "42px",
+                  position: "relative",
+                  background:
+                    "linear-gradient(160deg, rgba(255,255,255,0.08), rgba(255,215,120,0.04))",
+                  boxShadow:
+                    "inset 0 0 0 2px rgba(255,255,255,0.18), 0 0 40px rgba(255,205,90,0.28)",
+                }}
+              >
+                {/* Decorative circles */}
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "-80px",
+                    right: "-80px",
+                    width: "230px",
+                    height: "230px",
+                    borderRadius: "50%",
+                    border:
+                      "2px solid rgba(246,200,95,0.35)",
+                  }}
+                />
+
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: "-100px",
+                    left: "-90px",
+                    width: "250px",
+                    height: "250px",
+                    borderRadius: "50%",
+                    border:
+                      "2px solid rgba(246,200,95,0.28)",
+                  }}
+                />
+
+                {/* Top decoration */}
+                <div
+                  style={{
+                    textAlign: "center",
+                    fontSize: "34px",
+                    letterSpacing: "12px",
+                    color: "#f6c85f",
+                    marginBottom: "25px",
+                  }}
+                >
+                  ✦ ✧ ✦ ✧ ✦
+                </div>
+
+                {/* Ganesha */}
+                <div
+                  style={{
+                    width: "180px",
+                    height: "180px",
+                    margin:
+                      "0 auto 25px",
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background:
+                      "radial-gradient(circle, #ffe9a8 0%, #f6c85f 42%, #b66b16 100%)",
+                    boxShadow:
+                      "0 0 45px rgba(255,210,90,0.45)",
+                    fontSize: "92px",
+                  }}
+                >
+                  🐘
+                </div>
+
+                {/* Om */}
+                <div
+                  style={{
+                    textAlign: "center",
+                    fontSize: "58px",
+                    color: "#ffd875",
+                    marginBottom: "10px",
+                    fontWeight: "700",
+                  }}
+                >
+                  ॐ
+                </div>
+
+                {/* Title */}
+                <h2
+                  style={{
+                    textAlign: "center",
+                    margin: "0",
+                    fontSize: "52px",
+                    lineHeight: "1.18",
+                    fontWeight: "800",
+                    color: "#fff5d6",
+                    textShadow:
+                      "0 3px 15px rgba(0,0,0,0.35)",
+                  }}
+                >
+                  {t.title}
+                </h2>
+
+                {/* Recipient label */}
+                <div
+                  style={{
+                    textAlign: "center",
+                    marginTop: "35px",
+                    color: "#ffd875",
+                    fontSize: "27px",
+                    fontWeight: "600",
+                  }}
+                >
+                  {t.for}
+                </div>
+
+                {/* Recipient name */}
+                <div
+                  style={{
+                    textAlign: "center",
+                    marginTop: "8px",
+                    fontSize: "55px",
+                    lineHeight: "1.2",
+                    fontWeight: "800",
+                    color: "#ffffff",
+                    wordBreak: "break-word",
+                    textShadow:
+                      "0 3px 15px rgba(0,0,0,0.3)",
+                  }}
+                >
+                  {receiver}
+                </div>
+
+                {/* Wish white/cream panel */}
+                <div
+                  style={{
+                    marginTop: "42px",
+                    padding: "38px 35px",
+                    borderRadius: "30px",
+                    background:
+                      "linear-gradient(145deg, #fffaf0, #fff0cf)",
+                    border:
+                      "3px solid rgba(246,200,95,0.9)",
+                    boxShadow:
+                      "0 12px 35px rgba(0,0,0,0.25)",
+                    color: "#64132b",
+                  }}
+                >
+                  <div
+                    style={{
+                      textAlign: "center",
+                      fontSize: "34px",
+                      lineHeight: "1.5",
+                      fontWeight: "600",
+                      wordBreak: "break-word",
+                    }}
+                  >
+                    {t.wishes[
+                      selectedWish
+                    ]}
+                  </div>
+                </div>
+
+                {/* Divider */}
+                <div
+                  style={{
+                    textAlign: "center",
+                    margin:
+                      "32px 0 22px",
+                    color: "#f6c85f",
+                    fontSize: "35px",
+                    letterSpacing: "8px",
+                  }}
+                >
+                  ❖ ✦ ❖
+                </div>
+
+                {/* Sender */}
+                <div
+                  style={{
+                    textAlign: "center",
+                    fontSize: "26px",
+                    color: "#ffd875",
+                    fontWeight: "600",
+                  }}
+                >
+                  {t.from}
+                </div>
+
+                <div
+                  style={{
+                    textAlign: "center",
+                    marginTop: "7px",
+                    fontSize: "45px",
+                    fontWeight: "800",
+                    color: "#ffffff",
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {name} ❤️
+                </div>
+
+                {/* Bottom decoration */}
+                <div
+                  style={{
+                    textAlign: "center",
+                    marginTop: "38px",
+                    fontSize: "34px",
+                    letterSpacing: "12px",
+                    color: "#f6c85f",
+                  }}
+                >
+                  ✦ ✧ ✦ ✧ ✦
+                </div>
+
+                {/* Brand */}
+                <div
+                  style={{
+                    textAlign: "center",
+                    marginTop: "28px",
+                    fontSize: "27px",
+                    fontWeight: "800",
+                    color: "#ffe7a1",
+                    letterSpacing: "2px",
+                  }}
+                >
+                  ✨ WishLoop
+                </div>
+
+                <div
+                  style={{
+                    textAlign: "center",
+                    marginTop: "8px",
+                    fontSize: "19px",
+                    color: "rgba(255,248,231,0.8)",
+                  }}
+                >
+                  Create. Share. Celebrate.
+                </div>
+              </div>
+            </div>
+          </>
         )}
 
         <footer>
-          <span>
-            WishLoop
-          </span>{" "}
+          <span>WishLoop</span>{" "}
           • Create. Share. Celebrate. ✨
         </footer>
       </section>
