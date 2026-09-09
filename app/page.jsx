@@ -169,7 +169,7 @@ export default function Home() {
   }
 
   async function shareWhatsApp() {
-  const card = document.getElementById("wish-card");
+  const card = document.querySelector(".wish-card");
 
   if (!card) return;
 
